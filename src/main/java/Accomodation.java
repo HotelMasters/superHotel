@@ -6,8 +6,8 @@ import java.time.ZonedDateTime;
  */
 public class Accomodation {
     private Long id;
-    private Long guestId;
-    private Long roomId;
+    private Guest guest;
+    private Room room;
     private ZonedDateTime dateFrom;
     private ZonedDateTime dateTo;
     private Double totalPrice;
@@ -20,20 +20,20 @@ public class Accomodation {
         this.id = id;
     }
 
-    public Long getGuestId() {
-        return guestId;
+    public Guest getGuest() {
+        return guest;
     }
 
-    public void setGuestId(Long guestId) {
-        this.guestId = guestId;
+    public void setGuest(Guest guest) {
+        this.guest = guest;
     }
 
-    public Long getRoomId() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public ZonedDateTime getDateFrom() {
