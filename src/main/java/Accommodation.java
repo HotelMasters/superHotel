@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 /**
  * @author 445434
  */
-public class Accomodation {
+public class Accommodation {
     private Long id;
     private Guest guest;
     private Room room;

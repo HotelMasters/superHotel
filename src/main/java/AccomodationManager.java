@@ -5,12 +5,12 @@ import java.util.List;
  */
 public interface AccomodationManager {
 
-    void createAccomodation(Accomodation accomodation);
-    void updateAccomodation(Accomodation accomodation);
-    void deleteAccomodation(Accomodation accomodation);
+    void createAccomodation(Accommodation accommodation);
+    void updateAccomodation(Accommodation accommodation);
+    void deleteAccomodation(Accommodation accommodation);
     Room findRoomByGuest(Guest guest);
     Guest findGuestByRoom(Room room);
-    Accomodation findAccomodationById(Accomodation accomodation);
-    List<Accomodation> findAllAccomodations();
+    Accommodation findAccomodationById(Accommodation accommodation);
+    List<Accommodation> findAllAccomodations();
 
 }

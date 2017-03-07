@@ -5,17 +5,17 @@ import java.util.List;
  */
 public class AccomodationManagerImpl implements AccomodationManager{
     @Override
-    public void createAccomodation(Accomodation accomodation) {
+    public void createAccomodation(Accommodation accommodation) {
 
     }
 
     @Override
-    public void updateAccomodation(Accomodation accomodation) {
+    public void updateAccomodation(Accommodation accommodation) {
 
     }
 
     @Override
-    public void deleteAccomodation(Accomodation accomodation) {
+    public void deleteAccomodation(Accommodation accommodation) {
 
     }
 
@@ -30,12 +30,12 @@ public class AccomodationManagerImpl implements AccomodationManager{
     }
 
     @Override
-    public Accomodation findAccomodationById(Accomodation accomodation) {
+    public Accommodation findAccomodationById(Accommodation accommodation) {
         return null;
     }
 
     @Override
-    public List<Accomodation> findAllAccomodations() {
+    public List<Accommodation> findAllAccomodations() {
         return null;
     }
 }
