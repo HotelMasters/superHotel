@@ -9,6 +9,14 @@
     <version>1.0-SNAPSHOT</version>
     <name>SuperHotel</name>
 
+    <repositories>
+        <repository>
+            <id>superHotel</id>
+            <name>SuperHotel</name>
+            <url>https://github.com/HotelMasters/superHotel</url>
+        </repository>
+    </repositories>
+
     <developers>
         <developer>
             <name>Gabriela Godišková</name>
