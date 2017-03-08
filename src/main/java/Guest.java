@@ -2,7 +2,7 @@ import java.time.LocalDate;
 
 
 /**
- * @author 445434
+ * @author Gabriela Godiskova
  */
 public class Guest {
     private Long id;

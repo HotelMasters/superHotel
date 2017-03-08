@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * @author 445434
+ * @author Gabriela Godiskova
  */
 public class GuestManagerImpl implements GuestManager{
     public void createGuest(Guest guest) {
