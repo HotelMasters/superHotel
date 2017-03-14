@@ -1,4 +1,5 @@
-import org.junit.After;
+package pv168.hotelmasters.superhotel;
+
 import org.junit.Before;
 import org.junit.Test;
 
