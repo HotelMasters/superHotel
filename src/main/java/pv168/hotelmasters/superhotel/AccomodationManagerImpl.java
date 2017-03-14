@@ -1,3 +1,5 @@
+package pv168.hotelmasters.superhotel;
+
 import java.util.List;
 
 /**

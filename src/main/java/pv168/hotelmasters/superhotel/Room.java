@@ -1,3 +1,5 @@
+package pv168.hotelmasters.superhotel;
+
 /**
  * @author 445434
  */
