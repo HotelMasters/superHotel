@@ -1,18 +1,24 @@
 package pv168.hotelmasters.superhotel;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
 
 /**
  * @author Kristian Lesko
  */
 public class RoomManagerImplTest {
     private RoomManagerImpl manager;
+
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -25,10 +31,9 @@ public class RoomManagerImplTest {
         manager.createRoom(room);
 
         Long roomId = room.getId();
-        assertNotNull(roomId);
+        assertThat(roomId).isNotNull();
         Room createdRoom = manager.findRoomById(roomId);
-        assertEquals("The room retrieved from the manager differs from the saved one", room, createdRoom);
-        assertNotSame("The room retrieved from the manager is the same one that was saved", room, createdRoom);
+        assertThat(createdRoom).isEqualTo(room).isNotSameAs(room);
         assertDeepEquals(room, createdRoom);
     }
 
@@ -37,15 +42,17 @@ public class RoomManagerImplTest {
         manager.createRoom(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createRoomWithNegativeCapacity() {
         Room room = newRoom(-2, 1000);
+        exception.expect(IllegalArgumentException.class);
         manager.createRoom(room);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void createRoomWithNegativePrice() {
         Room room = newRoom(7, -200.5);
+        exception.expect(IllegalArgumentException.class);
         manager.createRoom(room);
     }
 
@@ -59,16 +66,16 @@ public class RoomManagerImplTest {
         room = manager.findRoomById(roomId);
         room.setCapacity(4);
         manager.updateRoom(room);
-        assertEquals(4, room.getCapacity());
+        assertThat(room.getCapacity()).isEqualTo(4);
 
         room = manager.findRoomById(roomId);
-        assertEquals(4, room.getCapacity());
+        assertThat(room.getCapacity()).isEqualTo(4);
         room.setPrice(10.4);
         manager.updateRoom(room);
-        assertEquals(Double.valueOf(10.4), room.getPrice());
+        assertThat(room.getPrice()).isEqualTo(Double.valueOf(10.4));
 
         room = manager.findRoomById(roomId);
-        assertEquals(Double.valueOf(10.4), room.getPrice());
+        assertThat(room.getPrice()).isEqualTo(Double.valueOf(10.4));
 
         // Ensure update isolation
         assertDeepEquals(secondRoom, manager.findRoomById(secondRoom.getId()));
@@ -79,39 +86,43 @@ public class RoomManagerImplTest {
         manager.updateRoom(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateRoomWithNullId() {
         Room room = newRoom(7, 100.2);
         manager.createRoom(room);
 
         room.setId(null);
+        exception.expect(IllegalArgumentException.class);
         manager.updateRoom(room);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateRoomWithInvalidId() {
         Room room = newRoom(7, 100.2);
         manager.createRoom(room);
 
         room.setId(room.getId() + 1);
+        exception.expect(IllegalArgumentException.class);
         manager.updateRoom(room);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateRoomWithNegativeCapacity() {
         Room room = newRoom(7, 100.1);
         manager.createRoom(room);
 
         room.setCapacity(-1);
+        exception.expect(IllegalArgumentException.class);
         manager.updateRoom(room);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void updateRoomWithNegativePrice() {
         Room room = newRoom(7, 100.0);
         manager.createRoom(room);
 
         room.setPrice(-420.2);
+        exception.expect(IllegalArgumentException.class);
         manager.updateRoom(room);
     }
 
@@ -119,16 +130,16 @@ public class RoomManagerImplTest {
     public void deleteRoom() {
         Room deletedRoom = newRoom(5, 42.8);
         manager.createRoom(deletedRoom);
-        assertNotNull(deletedRoom.getId());
+        assertThat(deletedRoom).isNotNull();
 
         Room keptRoom = newRoom(7, 1200.50);
         manager.createRoom(keptRoom);
-        assertNotNull(keptRoom.getId());
+        assertThat(keptRoom).isNotNull();
 
         manager.deleteRoom(deletedRoom);
 
-        assertNull(deletedRoom.getId());
-        assertNotNull(keptRoom.getId());
+        assertThat(deletedRoom).isNull();
+        assertThat(keptRoom).isNotNull();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -179,13 +190,13 @@ public class RoomManagerImplTest {
     }
 
     private static void assertDeepEquals(Room expectedRoom, Room actualRoom) {
-        assertEquals(expectedRoom.getId(), actualRoom.getId());
-        assertEquals(expectedRoom.getCapacity(), actualRoom.getCapacity());
-        assertEquals(expectedRoom.getPrice(), actualRoom.getPrice());
+        assertThat(actualRoom.getId()).isEqualTo(expectedRoom.getId());
+        assertThat(actualRoom.getCapacity()).isEqualTo(expectedRoom.getCapacity());
+        assertThat(actualRoom.getPrice()).isEqualTo(expectedRoom.getPrice());
     }
 
     private static void assertDeepEquals(List<Room> expectedRooms, List<Room> actualRooms) {
-        assertEquals(expectedRooms.size(), actualRooms.size());
+        assertThat(actualRooms.size()).isEqualTo(expectedRooms.size());
         for (int i = 0; i < expectedRooms.size(); i++) {
             assertDeepEquals(expectedRooms.get(i), actualRooms.get(i));
         }
