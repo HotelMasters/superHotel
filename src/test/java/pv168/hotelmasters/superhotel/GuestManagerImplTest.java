@@ -1,11 +1,15 @@
 package pv168.hotelmasters.superhotel;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+
 
 import java.time.LocalDate;
 
 import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author Gabriela Godiskova
@@ -19,33 +23,44 @@ public class GuestManagerImplTest {
         manager = new GuestManagerImpl();
     }
 
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
     @Test
     public void createGuest() throws Exception {
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         manager.createGuest(guest);
         Long guestId = guest.getId();
-        assertNotNull(guestId);
-        Guest result = manager.findGuestById(guestId);
-        assertEquals(guest, result);
-        assertNotSame(guest, result);
-        assertDeepEquals(guest, result);
+        assertThat(guestId).isNotNull();
+        assertThat(manager.findGuestById(guestId))
+                .isNotSameAs(guest)
+                .isEqualToComparingFieldByField(guest);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void createGuestWithNullName() {
         Guest guest = newGuest(null,"Filkukova 256, Brno-Reckovice",LocalDate.of(1997,8,10),Long.valueOf(123456));
+        expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(guest);
     }
 
-    @Test(expected = IllegalArgumentException.class)
     public void createGuestWithNullAdress() {
         Guest guest = newGuest("Adam Smith",null,LocalDate.of(1963,6,16),Long.valueOf(1234567));
+        expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(guest);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void createNullGuest() {
+        expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(null);
+    }
+
+
+    public void createGuestWithNullBirthday() {
+        Guest guest = newGuest("Henry Tudor", "Chestnut Ave 58 London", null, Long.valueOf(23456789));
+        expectedException.expect(IllegalArgumentException.class);
+        manager.createGuest(guest);
     }
 
 
@@ -61,69 +76,71 @@ public class GuestManagerImplTest {
         guest = manager.findGuestById(guestId);
         guest.setName("Henry Bacon");
         manager.updateGuest(guest);
-        assertEquals("Henry Bacon",guest.getName());
-        assertEquals("Kvetna 42, Brno-Pisarky",guest.getAdress());
-        assertEquals(LocalDate.of(1962, 8, 29),guest.getBirthDay());
-        assertEquals(Long.valueOf(12345678),guest.getCrCardNumber());
+        assertThat(guest.getName()).isEqualTo("Henry Bacon");
+        assertThat(guest.getAdress()).isEqualTo("Kvetna 42, Brno-Pisarky");
+        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
+        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(12345678));
 
         guest = manager.findGuestById(guestId);
         guest.setAdress("Manesova 21,Brno-Kralovo Pole");
         manager.updateGuest(guest);
-        assertEquals("Henry Bacon",guest.getName());
-        assertEquals("Manesova 21,Brno-Kralovo Pole",guest.getAdress());
-        assertEquals(LocalDate.of(1962, 8, 29),guest.getBirthDay());
-        assertEquals(Long.valueOf(12345678),guest.getCrCardNumber());
+        assertThat(guest.getName()).isEqualTo("Henry Bacon");
+        assertThat(guest.getAdress()).isEqualTo("Manesova 21,Brno-Kralovo Pole");
+        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
+        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(12345678));
 
         guest = manager.findGuestById(guestId);
         guest.setCrCardNumber(Long.valueOf(123456789));
         manager.updateGuest(guest);
-        assertEquals("Henry Bacon",guest.getName());
-        assertEquals("Manesova 21,Brno-Kralovo Pole",guest.getAdress());
-        assertEquals(LocalDate.of(1962, 8, 29),guest.getBirthDay());
-        assertEquals(Long.valueOf(123456789),guest.getCrCardNumber());
-
-        assertDeepEquals(difGuest,manager.findGuestById(difGuest.getId()));
+        assertThat(guest.getName()).isEqualTo("Henry Bacon");
+        assertThat(guest.getAdress()).isEqualTo("Manesova 21,Brno-Kralovo Pole");
+        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
+        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(123456789));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void updateNullGuest() throws Exception{
+        expectedException.expect(IllegalArgumentException.class);
         manager.updateGuest(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void updateGuestWithNullName() {
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         Long guestId = guest.getId();
         guest = manager.findGuestById(guestId);
         guest.setName(null);
+        expectedException.expect(IllegalArgumentException.class);
         manager.updateGuest(guest);
     }
 
     @Test
     public void deleteGuest() throws Exception {
-        Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        Guest difGuest = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
-        manager.createGuest(guest);
-        manager.createGuest(difGuest);
+        Guest john = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
+        Guest adam = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
+        manager.createGuest(john);
+        manager.createGuest(adam);
 
-        assertNotNull(manager.findGuestById(guest.getId()));
-        assertNotNull(manager.findGuestById(difGuest.getId()));
+        assertThat(manager.findGuestById(john.getId())).isNotNull();
+        assertThat(manager.findGuestById(adam.getId())).isNotNull();
 
-        manager.deleteGuest(guest);
+        manager.deleteGuest(john);
 
-        assertNull(manager.findGuestById(guest.getId()));
-        assertNotNull(manager.findGuestById(difGuest.getId()));
+        assertThat(manager.findGuestById(john.getId())).isNull();
+        assertThat(manager.findGuestById(adam.getId())).isNotNull();
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void deleteNullGuest() {
+        expectedException.expect(IllegalArgumentException.class);
         manager.deleteGuest(null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+
     public void deleteGuestWithNullId(){
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         guest.setId(null);
+        expectedException.expect(IllegalArgumentException.class);
         manager.deleteGuest(guest);
     }
 
