@@ -8,7 +8,6 @@ import org.junit.rules.ExpectedException;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -19,7 +18,7 @@ public class GuestManagerImplTest {
     private GuestManagerImpl manager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         manager = new GuestManagerImpl();
     }
 
@@ -27,7 +26,7 @@ public class GuestManagerImplTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void createGuest() throws Exception {
+    public void createGuest() {
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         manager.createGuest(guest);
         Long guestId = guest.getId();
@@ -38,12 +37,14 @@ public class GuestManagerImplTest {
     }
 
 
+    @Test
     public void createGuestWithNullName() {
         Guest guest = newGuest(null,"Filkukova 256, Brno-Reckovice",LocalDate.of(1997,8,10),Long.valueOf(123456));
         expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(guest);
     }
 
+    @Test
     public void createGuestWithNullAdress() {
         Guest guest = newGuest("Adam Smith",null,LocalDate.of(1963,6,16),Long.valueOf(1234567));
         expectedException.expect(IllegalArgumentException.class);
@@ -51,12 +52,14 @@ public class GuestManagerImplTest {
     }
 
 
+    @Test
     public void createNullGuest() {
         expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(null);
     }
 
 
+    @Test
     public void createGuestWithNullBirthday() {
         Guest guest = newGuest("Henry Tudor", "Chestnut Ave 58 London", null, Long.valueOf(23456789));
         expectedException.expect(IllegalArgumentException.class);
@@ -66,7 +69,7 @@ public class GuestManagerImplTest {
 
 
     @Test
-    public void updateGuest() throws Exception {
+    public void updateGuest() {
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         Guest difGuest = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
         manager.createGuest(guest);
@@ -99,12 +102,13 @@ public class GuestManagerImplTest {
     }
 
 
-    public void updateNullGuest() throws Exception{
+    @Test
+    public void updateNullGuest() {
         expectedException.expect(IllegalArgumentException.class);
         manager.updateGuest(null);
     }
 
-
+    @Test
     public void updateGuestWithNullName() {
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         Long guestId = guest.getId();
@@ -115,7 +119,7 @@ public class GuestManagerImplTest {
     }
 
     @Test
-    public void deleteGuest() throws Exception {
+    public void deleteGuest() {
         Guest john = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         Guest adam = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
         manager.createGuest(john);
@@ -131,12 +135,14 @@ public class GuestManagerImplTest {
     }
 
 
+    @Test
     public void deleteNullGuest() {
         expectedException.expect(IllegalArgumentException.class);
         manager.deleteGuest(null);
     }
 
 
+    @Test
     public void deleteGuestWithNullId(){
         Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
         guest.setId(null);
@@ -153,13 +159,4 @@ public class GuestManagerImplTest {
         guest.setCrCardNumber(crCardNumber);
         return guest;
     }
-
-    private void assertDeepEquals(Guest expected, Guest actual){
-        assertEquals(expected.getId(),actual.getId());
-        assertEquals(expected.getName(),actual.getName());
-        assertEquals(expected.getAdress(),actual.getAdress());
-        assertEquals(expected.getBirthDay(),actual.getBirthDay());
-        assertEquals(expected.getCrCardNumber(),actual.getCrCardNumber());
-    }
-
 }
