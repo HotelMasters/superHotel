@@ -1,12 +1,21 @@
 package pv168.hotelmasters.superhotel;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import javax.sql.DataSource;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.apache.derby.jdbc.EmbeddedDataSource;
+import pv168.hotelmasters.superhotel.db.Utilities;
+import pv168.hotelmasters.superhotel.exceptions.DBException;
+import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,13 +25,29 @@ import java.util.List;
  */
 public class RoomManagerImplTest {
     private RoomManagerImpl manager;
+    private DataSource dataSource;
+
+    private void prepareDataSource() throws SQLException {
+        EmbeddedDataSource embeddedDataSource = new EmbeddedDataSource();
+        embeddedDataSource.setDatabaseName("memory:superhotel-test");
+        embeddedDataSource.setCreateDatabase("create");
+        dataSource = embeddedDataSource;
+    }
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Before
-    public void setUp() {
+    public void setUp() throws SQLException {
+        prepareDataSource();
+        Utilities.executeSql(getClass().getResource("createTables.sql"), dataSource);
         manager = new RoomManagerImpl();
+        manager.setDataSource(dataSource);
+    }
+
+    @After
+    public void tearDown() throws SQLException {
+        Utilities.executeSql(getClass().getResource("dropTables.sql"), dataSource);
     }
 
     @Test
@@ -45,14 +70,14 @@ public class RoomManagerImplTest {
     @Test
     public void createRoomWithNegativeCapacity() {
         Room room = newRoom(-2, 1000);
-        exception.expect(IllegalArgumentException.class);
+        exception.expect(ValidationError.class);
         manager.createRoom(room);
     }
 
     @Test
     public void createRoomWithNegativePrice() {
         Room room = newRoom(7, -200.5);
-        exception.expect(IllegalArgumentException.class);
+        exception.expect(ValidationError.class);
         manager.createRoom(room);
     }
 
@@ -61,6 +86,7 @@ public class RoomManagerImplTest {
         Room room = newRoom(7, 100.3);
         Room secondRoom = newRoom(5, 200.0);
         manager.createRoom(room);
+        manager.createRoom(secondRoom);
         Long roomId = room.getId();
 
         room = manager.findRoomById(roomId);
@@ -102,7 +128,7 @@ public class RoomManagerImplTest {
         manager.createRoom(room);
 
         room.setId(room.getId() + 1);
-        exception.expect(IllegalArgumentException.class);
+        exception.expect(DBException.class);
         manager.updateRoom(room);
     }
 
@@ -112,7 +138,7 @@ public class RoomManagerImplTest {
         manager.createRoom(room);
 
         room.setCapacity(-1);
-        exception.expect(IllegalArgumentException.class);
+        exception.expect(ValidationError.class);
         manager.updateRoom(room);
     }
 
@@ -122,7 +148,7 @@ public class RoomManagerImplTest {
         manager.createRoom(room);
 
         room.setPrice(-420.2);
-        exception.expect(IllegalArgumentException.class);
+        exception.expect(ValidationError.class);
         manager.updateRoom(room);
     }
 
@@ -130,6 +156,7 @@ public class RoomManagerImplTest {
     public void deleteRoom() {
         Room deletedRoom = newRoom(5, 42.8);
         manager.createRoom(deletedRoom);
+        Long deletedRoomId = deletedRoom.getId();
         assertThat(deletedRoom).isNotNull();
 
         Room keptRoom = newRoom(7, 1200.50);
@@ -137,6 +164,7 @@ public class RoomManagerImplTest {
         assertThat(keptRoom).isNotNull();
 
         manager.deleteRoom(deletedRoom);
+        deletedRoom = manager.findRoomById(deletedRoomId);
 
         assertThat(deletedRoom).isNull();
         assertThat(keptRoom).isNotNull();
