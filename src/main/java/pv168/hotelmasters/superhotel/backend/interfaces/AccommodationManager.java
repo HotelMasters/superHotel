@@ -9,14 +9,14 @@ import java.util.List;
 /**
  * @author 445434
  */
-public interface AccomodationManager {
+public interface AccommodationManager {
 
-    void createAccomodation(Accommodation accommodation);
-    void updateAccomodation(Accommodation accommodation);
-    void deleteAccomodation(Accommodation accommodation);
+    void createAccommodation(Accommodation accommodation);
+    void updateAccommodation(Accommodation accommodation);
+    void deleteAccommodation(Accommodation accommodation);
     Room findRoomByGuest(Guest guest);
     Guest findGuestByRoom(Room room);
-    Accommodation findAccomodationById(Long id);
-    List<Accommodation> findAllAccomodations();
+    Accommodation findAccommodationById(Accommodation accommodation);
+    List<Accommodation> findAllAccommodations();
 
 }

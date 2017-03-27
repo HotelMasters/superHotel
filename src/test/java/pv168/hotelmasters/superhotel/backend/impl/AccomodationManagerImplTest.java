@@ -28,9 +28,9 @@ import static java.time.Month.*;
 /**
  * @author Gabriela Godiskova
  */
-public class AccomodationManagerImplTest {
+public class AccommodationManagerImplTest {
 
-    private AccomodationManagerImpl manager;
+    private AccommodationManagerImpl manager;
     private GuestManagerImpl guestManager;
     private RoomManagerImpl roomManager;
     private DataSource dataSource;
@@ -51,7 +51,7 @@ public class AccomodationManagerImplTest {
     public void setUp() throws SQLException{
         dataSource = prepareDataSrc();
         Utilities.executeSql(getClass().getResource("createTables.sql"),dataSource);
-        manager = new AccomodationManagerImpl();
+        manager = new AccommodationManagerImpl();
         manager.setDataSource(dataSource);
         guestManager = new GuestManagerImpl(Clock.fixed(NOW.toInstant(),NOW.getZone()));
         guestManager.setDataSource(dataSource);
@@ -115,7 +115,7 @@ public class AccomodationManagerImplTest {
     }
 
     @Test
-    public void createAccomodation() {
+    public void createAccommodation() {
 
         assertThat(manager.findRoomByGuest(john)).isNull();
         assertThat(manager.findRoomByGuest(jane)).isNull();
@@ -126,8 +126,8 @@ public class AccomodationManagerImplTest {
         Accommodation acc1 = acc1Builder().build();
         Accommodation acc2 = acc2Builder().build();
 
-        manager.createAccomodation(acc1);
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc1);
+        manager.createAccommodation(acc2);
 
         assertThat(manager.findGuestByRoom(economy)).isEqualToComparingFieldByField(john);
         assertThat(manager.findGuestByRoom(luxury)).isEqualToComparingFieldByField(jane);
@@ -144,30 +144,30 @@ public class AccomodationManagerImplTest {
     public void createAccommodationWithNullGuest(){
         Accommodation acc = acc1Builder().guest(null).build();
         expectedException.expect(IllegalArgumentException.class);
-        manager.createAccomodation(acc);
+        manager.createAccommodation(acc);
     }
 
     @Test
     public void createAccommodationWithNullRoom() {
         Accommodation acc = acc1Builder().room(null).build();
         expectedException.expect(IllegalArgumentException.class);
-        manager.createAccomodation(acc);
+        manager.createAccommodation(acc);
     }
 
     @Test
     public void createAccommodationWithExistingId() {
         Accommodation acc = acc1Builder().id(42L).build();
         expectedException.expect(InvalidEntityException.class);
-        manager.createAccomodation(acc);
+        manager.createAccommodation(acc);
     }
 
     @Test
-    public void deleteAccomodation() {
+    public void deleteAccommodation() {
         Accommodation acc1 = acc1Builder().build();
         Accommodation acc2 = acc2Builder().build();
 
-        manager.createAccomodation(acc1);
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc1);
+        manager.createAccommodation(acc2);
 
         assertThat(manager.findRoomByGuest(john)).isEqualToComparingFieldByField(economy);
         assertThat(manager.findRoomByGuest(jane)).isEqualToComparingFieldByField(luxury);
@@ -175,99 +175,99 @@ public class AccomodationManagerImplTest {
         assertThat(manager.findRoomByGuest(jefrey)).isNull();
         assertThat(manager.findRoomByGuest(phoebe)).isNull();
 
-        manager.deleteAccomodation(acc1);
+        manager.deleteAccommodation(acc1);
 
-        assertThat(manager.findAccomodationById(acc1.getId())).isNull();
-        assertThat(manager.findAccomodationById(acc2.getId())).isEqualTo(acc2);
+        assertThat(manager.findAccommodationById(acc1.getId())).isNull();
+        assertThat(manager.findAccommodationById(acc2.getId())).isEqualTo(acc2);
     }
 
     @Test
-    public void deleteAccomodationWithNullId() {
+    public void deleteAccommodationWithNullId() {
         Accommodation acc1 = acc1Builder().id(null).build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc1);
+        manager.deleteAccommodation(acc1);
     }
 
     @Test
-    public void deleteAccomodationWithNullRoom() {
+    public void deleteAccommodationWithNullRoom() {
         Accommodation acc2 = acc2Builder().room(null).build();
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc2);
         expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc2);
+        manager.deleteAccommodation(acc2);
     }
 
     @Test
-    public void deleteAccomodationWithNullGuest() {
+    public void deleteAccommodationWithNullGuest() {
         Accommodation acc1 = acc1Builder().guest(null).build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc1);
+        manager.deleteAccommodation(acc1);
     }
 
     @Test
-    public void updateAccomodation() {
+    public void updateAccommodation() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
 
         Accommodation acc2 = acc2Builder().build();
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc2);
 
         Long acc1Id = acc1.getId();
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setGuest(jack);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setRoom(penthouse);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setDateFrom(LocalDateTime.of(2008,FEBRUARY,29,13,00));
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setDateTo(LocalDateTime.of(2016,APRIL,4,12,00));
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setTotalPrice(201.00);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        assertThat(manager.findAccomodationById(acc2.getId())).isEqualToComparingFieldByField(acc2);
+        assertThat(manager.findAccommodationById(acc2.getId())).isEqualToComparingFieldByField(acc2);
     }
 
     @Test
-    public void updateAccomodationWithNullId() {
+    public void updateAccommodationWithNullId() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         acc1.setId(null);
         expectedException.expect(InvalidEntityException.class);
-        manager.updateAccomodation(acc1);
+        manager.updateAccommodation(acc1);
     }
 
     @Test
-    public void updateAccomodationWithNullGuest() {
+    public void updateAccommodationWithNullGuest() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         acc1.setGuest(null);
         expectedException.expect(ValidationError.class);
-        manager.updateAccomodation(acc1);
+        manager.updateAccommodation(acc1);
     }
 
     @Test
-    public void updateAccomodationWithNullRoom() {
+    public void updateAccommodationWithNullRoom() {
         Accommodation acc2 = acc2Builder().build();
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc2);
         acc2.setRoom(null);
         expectedException.expect(ValidationError.class);
-        manager.updateAccomodation(acc2);
+        manager.updateAccommodation(acc2);
     }
 
 
