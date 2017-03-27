@@ -1,13 +1,23 @@
 package pv168.hotelmasters.superhotel;
 
+import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
+import pv168.hotelmasters.superhotel.db.Utilities;
+import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+
+import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.time.*;
 
 
-import java.time.LocalDate;
-
+import static java.time.Month.AUGUST;
+import static java.time.Month.FEBRUARY;
+import static java.time.Month.NOVEMBER;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -16,147 +26,175 @@ import static org.assertj.core.api.Assertions.*;
 public class GuestManagerImplTest {
 
     private GuestManagerImpl manager;
+    private DataSource dataSource;
+    private final static ZonedDateTime NOW = LocalDateTime.of(2012, FEBRUARY, 29, 16, 00).atZone(ZoneId.of("UTC"));
 
-    @Before
-    public void setUp()  {
-        manager = new GuestManagerImpl();
-    }
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    private static DataSource prepareDataSource() throws SQLException {
+        EmbeddedDataSource datSrc = new EmbeddedDataSource();
+        datSrc.setDatabaseName("memory:guestMngrTest");
+        datSrc.setCreateDatabase("create");
+        return datSrc;
+    }
+
+    private static Clock prepareClock(ZonedDateTime now) {
+        return Clock.fixed(now.toInstant(), now.getZone());
+    }
+
+    @Before
+    public void setUp() throws SQLException {
+        dataSource = prepareDataSource();
+        Utilities.executeSql(GuestManager.class.getResource("createTables.sql"),dataSource);
+        manager = new GuestManagerImpl(prepareClock(NOW));
+        manager.setDataSource(dataSource);
+    }
+
+    @After
+    public void tearDown() throws SQLException{
+        Utilities.executeSql(GuestManager.class.getResource("dropTables.sql"),dataSource);
+    }
+
+
+    private GuestBuilder johnBuilder() {
+        return new GuestBuilder()
+                .name("John Locke")
+                .address("Kvetna 42, Brno")
+                .birthday(1962,AUGUST,29)
+                .crCardNm(Long.valueOf(12345678));
+    }
+
+    private GuestBuilder janeBuilder() {
+        return new GuestBuilder()
+                .name("Jane Eyre")
+                .address("Chestnut Ave 102, London")
+                .birthday(1989,NOVEMBER,17)
+                .crCardNm(Long.valueOf(123456789));
+    }
+
+
     @Test
-    public void createGuest() {
-        Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        manager.createGuest(guest);
-        Long guestId = guest.getId();
+    public void createGuest() throws InvalidEntityException,SQLException {
+
+        Guest john = johnBuilder().build();
+        manager.createGuest(john);
+
+        Long guestId = john.getId();
         assertThat(guestId).isNotNull();
         assertThat(manager.findGuestById(guestId))
-                .isNotSameAs(guest)
-                .isEqualToComparingFieldByField(guest);
+                .isNotSameAs(john)
+                .isEqualToComparingFieldByField(john);
     }
 
 
     @Test
-    public void createGuestWithNullName() {
-        Guest guest = newGuest(null,"Filkukova 256, Brno-Reckovice",LocalDate.of(1997,8,10),Long.valueOf(123456));
-        expectedException.expect(IllegalArgumentException.class);
-        manager.createGuest(guest);
+    public void createGuestWithNullName() throws InvalidEntityException,SQLException {
+        Guest john = johnBuilder().name(null).build();
+        expectedException.expect(ValidationError.class);
+        manager.createGuest(john);
     }
 
     @Test
-    public void createGuestWithNullAdress() {
-        Guest guest = newGuest("Adam Smith",null,LocalDate.of(1963,6,16),Long.valueOf(1234567));
-        expectedException.expect(IllegalArgumentException.class);
-        manager.createGuest(guest);
+    public void createGuestWithNullAdress() throws InvalidEntityException,SQLException {
+        Guest john = johnBuilder().address(null).build();
+        expectedException.expect(ValidationError.class);
+        manager.createGuest(john);
     }
 
 
     @Test
-    public void createNullGuest() {
+    public void createNullGuest() throws InvalidEntityException,SQLException {
         expectedException.expect(IllegalArgumentException.class);
         manager.createGuest(null);
     }
 
 
     @Test
-    public void createGuestWithNullBirthday() {
-        Guest guest = newGuest("Henry Tudor", "Chestnut Ave 58 London", null, Long.valueOf(23456789));
-        expectedException.expect(IllegalArgumentException.class);
-        manager.createGuest(guest);
+    public void createGuestWithNullBirthday() throws InvalidEntityException {
+        Guest john = johnBuilder().address(null).build();
+        expectedException.expect(ValidationError.class);
+        manager.createGuest(john);
     }
 
 
 
     @Test
-    public void updateGuest() {
-        Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        Guest difGuest = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
-        manager.createGuest(guest);
-        manager.createGuest(difGuest);
-        Long guestId = guest.getId();
+    public void updateGuest() throws InvalidEntityException,SQLException{
+        Guest john = johnBuilder().build();
+        Guest jane = janeBuilder().build();
+        manager.createGuest(john);
+        manager.createGuest(jane);
+        Long guestId = john.getId();
 
-        guest = manager.findGuestById(guestId);
-        guest.setName("Henry Bacon");
-        manager.updateGuest(guest);
-        assertThat(guest.getName()).isEqualTo("Henry Bacon");
-        assertThat(guest.getAdress()).isEqualTo("Kvetna 42, Brno-Pisarky");
-        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
-        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(12345678));
+        john = manager.findGuestById(guestId);
+        john.setName("Henry Bacon");
+        manager.updateGuest(john);
+        assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
 
-        guest = manager.findGuestById(guestId);
-        guest.setAdress("Manesova 21,Brno-Kralovo Pole");
-        manager.updateGuest(guest);
-        assertThat(guest.getName()).isEqualTo("Henry Bacon");
-        assertThat(guest.getAdress()).isEqualTo("Manesova 21,Brno-Kralovo Pole");
-        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
-        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(12345678));
+        john = manager.findGuestById(guestId);
+        john.setAdress("Manesova 21,Brno-Kralovo Pole");
+        manager.updateGuest(john);
+        assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
 
-        guest = manager.findGuestById(guestId);
-        guest.setCrCardNumber(Long.valueOf(123456789));
-        manager.updateGuest(guest);
-        assertThat(guest.getName()).isEqualTo("Henry Bacon");
-        assertThat(guest.getAdress()).isEqualTo("Manesova 21,Brno-Kralovo Pole");
-        assertThat(guest.getBirthDay()).isEqualTo(LocalDate.of(1962, 8, 29));
-        assertThat(guest.getCrCardNumber()).isEqualTo(Long.valueOf(123456789));
+
+        john = manager.findGuestById(guestId);
+        john.setCrCardNumber(Long.valueOf(123456789));
+        manager.updateGuest(john);
+        assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
+        assertThat(manager.findGuestById(jane.getId())).isEqualToComparingFieldByField(jane);
     }
 
 
     @Test
-    public void updateNullGuest() {
+    public void updateNullGuest() throws InvalidEntityException{
         expectedException.expect(IllegalArgumentException.class);
         manager.updateGuest(null);
     }
 
     @Test
-    public void updateGuestWithNullName() {
-        Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        Long guestId = guest.getId();
-        guest = manager.findGuestById(guestId);
-        guest.setName(null);
-        expectedException.expect(IllegalArgumentException.class);
-        manager.updateGuest(guest);
+    public void updateGuestWithNullName() throws InvalidEntityException {
+        Guest john = johnBuilder().build();
+        manager.createGuest(john);
+        Long guestId = john.getId();
+
+        john = manager.findGuestById(guestId);
+        john.setName(null);
+        expectedException.expect(ValidationError.class);
+        manager.updateGuest(john);
     }
 
     @Test
-    public void deleteGuest() {
-        Guest john = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        Guest adam = newGuest("Adam Smith","Filkukova 256, Brno-Reckovice",LocalDate.of(1963,6,16),Long.valueOf(1234567));
+    public void deleteGuest() throws InvalidEntityException,SQLException{
+        Guest john = johnBuilder().build();
+        Guest jane = janeBuilder().build();
         manager.createGuest(john);
-        manager.createGuest(adam);
+        manager.createGuest(jane);
 
         assertThat(manager.findGuestById(john.getId())).isNotNull();
-        assertThat(manager.findGuestById(adam.getId())).isNotNull();
+        assertThat(manager.findGuestById(jane.getId())).isNotNull();
 
         manager.deleteGuest(john);
 
         assertThat(manager.findGuestById(john.getId())).isNull();
-        assertThat(manager.findGuestById(adam.getId())).isNotNull();
+        assertThat(manager.findGuestById(jane.getId())).isNotNull();
     }
 
 
     @Test
-    public void deleteNullGuest() {
+    public void deleteNullGuest() throws InvalidEntityException{
         expectedException.expect(IllegalArgumentException.class);
         manager.deleteGuest(null);
     }
 
 
     @Test
-    public void deleteGuestWithNullId(){
-        Guest guest = newGuest("John Locke", "Kvetna 42, Brno-Pisarky", LocalDate.of(1962, 8, 29), Long.valueOf(12345678));
-        guest.setId(null);
-        expectedException.expect(IllegalArgumentException.class);
-        manager.deleteGuest(guest);
+    public void deleteGuestWithNullId() throws InvalidEntityException{
+        Guest john = johnBuilder().build();
+        john.setId(null);
+        expectedException.expect(InvalidEntityException.class);
+        manager.deleteGuest(john);
     }
 
-
-    private static Guest newGuest(String name, String adress, LocalDate birthday, Long crCardNumber) {
-        Guest guest = new Guest();
-        guest.setName(name);
-        guest.setAdress(adress);
-        guest.setBirthDay(birthday);
-        guest.setCrCardNumber(crCardNumber);
-        return guest;
-    }
 }
