@@ -56,4 +56,9 @@ public class Room {
         logger.fine("Comparing to " + other);
         return this.id != null && other instanceof Room && ((Room) other).id.equals(this.id);
     }
+
+    @Override
+    public String toString() {
+        return "[Room ID " + id + "]";
+    }
 }
