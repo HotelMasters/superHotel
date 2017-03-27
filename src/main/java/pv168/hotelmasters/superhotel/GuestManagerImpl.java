@@ -1,3 +1,4 @@
+
 package pv168.hotelmasters.superhotel;
 
 import java.util.List;
@@ -6,6 +7,8 @@ import java.util.List;
  * @author Gabriela Godiskova
  */
 public class GuestManagerImpl implements GuestManager{
+
+
     public void createGuest(Guest guest) {
 
     }
