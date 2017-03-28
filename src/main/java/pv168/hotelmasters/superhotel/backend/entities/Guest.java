@@ -1,4 +1,4 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.entities;
 
 import java.time.LocalDate;
 

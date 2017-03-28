@@ -1,4 +1,6 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.impl;
+
+import pv168.hotelmasters.superhotel.backend.entities.Room;
 
 /**
  * @author Kristian Lesko

@@ -1,4 +1,8 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.interfaces;
+
+import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
+import pv168.hotelmasters.superhotel.backend.entities.Guest;
+import pv168.hotelmasters.superhotel.backend.entities.Room;
 
 import java.util.List;
 
