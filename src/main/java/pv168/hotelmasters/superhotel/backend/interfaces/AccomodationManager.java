@@ -16,7 +16,7 @@ public interface AccomodationManager {
     void deleteAccomodation(Accommodation accommodation);
     Room findRoomByGuest(Guest guest);
     Guest findGuestByRoom(Room room);
-    Accommodation findAccomodationById(Accommodation accommodation);
+    Accommodation findAccomodationById(Long id);
     List<Accommodation> findAllAccomodations();
 
 }
