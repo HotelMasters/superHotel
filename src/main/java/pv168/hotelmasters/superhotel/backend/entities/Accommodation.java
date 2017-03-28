@@ -60,4 +60,19 @@ public class Accommodation {
     public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return this.id != null && other instanceof Accommodation && ((Accommodation) other).id.equals(this.id);
+    }
+
+    @Override
+    public String toString() {
+        return "[Accommodation ID " + id + "]";
+    }
 }

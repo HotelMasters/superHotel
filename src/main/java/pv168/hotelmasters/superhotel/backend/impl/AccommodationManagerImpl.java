@@ -24,14 +24,20 @@ public class AccommodationManagerImpl implements AccommodationManager {
     private static final Logger logger = Logger.getLogger("RoomManagerImpl");
     private DataSource dataSource;
     private Clock clock;
+    private GuestManagerImpl guestManager;
+    private RoomManagerImpl roomManager;
 
     public AccommodationManagerImpl(Clock clock) {
         this.clock = clock;
+        guestManager = new GuestManagerImpl(clock);
+        roomManager = new RoomManagerImpl();
         logger.fine("Initialized RoomManagerImpl object");
     }
 
     public void setDataSource(DataSource source) {
         dataSource = source;
+        guestManager.setDataSource(source);
+        roomManager.setDataSource(source);
     }
 
     private void checkDataSource() {
@@ -82,6 +88,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
             statement.setDate(3, Date.valueOf(accommodation.getDateFrom()));
             statement.setDate(4, Date.valueOf(accommodation.getDateTo()));
             statement.setDouble(5, accommodation.getTotalPrice());
+            statement.setLong(6, accommodation.getId());
             int count = statement.executeUpdate();
             Utilities.checkUpdateSanity(count, false);
         } catch (SQLException e) {
@@ -97,7 +104,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
             throw new IllegalArgumentException("Cannot delete null accommodation");
         }
         if (accommodation.getId() == null) {
-            throw new IllegalArgumentException("Accommodation does not exist in the DB, cannot delete");
+            throw new InvalidEntityException("Accommodation does not exist in the DB, cannot delete");
         }
         String query = "DELETE FROM accommodation WHERE id = ?";
         try (Connection connection = dataSource.getConnection()) {
@@ -113,7 +120,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
 
     @Override
     public Room findRoomByGuest(Guest guest) {
-        String query = "SELECT id, guestId, roomId, startDate, endDate, price FROM guest WHERE guestId = ?";
+        String query = "SELECT id, guestId, roomId, startDate, endDate, price FROM accommodation WHERE guestId = ?";
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, guest.getId());
@@ -133,13 +140,16 @@ public class AccommodationManagerImpl implements AccommodationManager {
 
     @Override
     public Guest findGuestByRoom(Room room) {
-        String query = "SELECT id, guestId, roomId, startDate, endDate, price FROM guest WHERE roomId = ?";
+        String query = "SELECT id, guestId, roomId, startDate, endDate, price FROM accommodation WHERE roomId = ?";
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, room.getId());
             List<Accommodation> accommodations = multipleItemQuery(statement);
             for (Accommodation accommodation : accommodations) {
                 LocalDate now = LocalDate.now(clock);
+                logger.info("now = " + now);
+                logger.info("from = " + accommodation.getDateFrom());
+                logger.info("to = " + accommodation.getDateTo());
                 if (accommodation.getDateFrom().isBefore(now) && accommodation.getDateTo().isAfter(now)) {
                     return accommodation.getGuest();
                 }
@@ -200,7 +210,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
         logger.info("Validation check passed for accommodation " + accommodation);
     }
 
-    private static Accommodation singleItemQuery(PreparedStatement ps) throws SQLException {
+    private Accommodation singleItemQuery(PreparedStatement ps) throws SQLException {
         ResultSet rs = ps.executeQuery();
         if (rs.next()) {
             Accommodation accommodation = parseAccommodation(rs);
@@ -213,7 +223,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
         }
     }
 
-    private static List<Accommodation> multipleItemQuery(PreparedStatement ps) throws SQLException {
+    private List<Accommodation> multipleItemQuery(PreparedStatement ps) throws SQLException {
         ResultSet rs = ps.executeQuery();
         List<Accommodation> accommodations = new ArrayList<>();
         while (rs.next()) {
@@ -222,8 +232,14 @@ public class AccommodationManagerImpl implements AccommodationManager {
         return accommodations;
     }
 
-    private static Accommodation parseAccommodation(ResultSet resultSet) {
-        return null;
+    private Accommodation parseAccommodation(ResultSet resultSet) throws SQLException {
+        Accommodation accommodation = new Accommodation();
+        accommodation.setId(resultSet.getLong("id"));
+        accommodation.setGuest(guestManager.findGuestById(resultSet.getLong("guestId")));
+        accommodation.setRoom(roomManager.findRoomById(resultSet.getLong("roomId")));
+        accommodation.setDateFrom(resultSet.getDate("startDate").toLocalDate());
+        accommodation.setDateTo(resultSet.getDate("endDate").toLocalDate());
+        accommodation.setTotalPrice(resultSet.getDouble("price"));
+        return accommodation;
     }
-
 }

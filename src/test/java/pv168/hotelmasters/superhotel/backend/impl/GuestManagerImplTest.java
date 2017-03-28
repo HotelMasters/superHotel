@@ -28,7 +28,7 @@ public class GuestManagerImplTest {
 
     private GuestManagerImpl manager;
     private DataSource dataSource;
-    private final static ZonedDateTime NOW = LocalDateTime.of(2012, FEBRUARY, 29, 16, 00).atZone(ZoneId.of("UTC"));
+    private final static LocalDate NOW = LocalDate.of(2012, FEBRUARY, 29);
 
 
     @Rule
@@ -41,21 +41,21 @@ public class GuestManagerImplTest {
         return datSrc;
     }
 
-    private static Clock prepareClock(ZonedDateTime now) {
-        return Clock.fixed(now.toInstant(), now.getZone());
+    private static Clock prepareClock(LocalDate now) {
+        return Clock.fixed(now.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault());
     }
 
     @Before
     public void setUp() throws SQLException {
         dataSource = prepareDataSource();
-        Utilities.executeSql(getClass().getResource("createTables.sql"),dataSource);
+        Utilities.executeSql(getClass().getResource("createTables.sql"), dataSource);
         manager = new GuestManagerImpl(prepareClock(NOW));
         manager.setDataSource(dataSource);
     }
 
     @After
     public void tearDown() throws SQLException{
-        Utilities.executeSql(getClass().getResource("dropTables.sql"),dataSource);
+        Utilities.executeSql(getClass().getResource("dropTables.sql"), dataSource);
     }
 
     private GuestFactory johnBuilder() {
