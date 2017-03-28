@@ -30,7 +30,7 @@ public class RoomManagerImplTest {
 
     private void prepareDataSource() throws SQLException {
         EmbeddedDataSource embeddedDataSource = new EmbeddedDataSource();
-        embeddedDataSource.setDatabaseName("memory:superhotel-test");
+        embeddedDataSource.setDatabaseName("memory:roomMngrTest");
         embeddedDataSource.setCreateDatabase("create");
         dataSource = embeddedDataSource;
     }

@@ -3,7 +3,7 @@ package pv168.hotelmasters.superhotel.backend.impl;
 import pv168.hotelmasters.superhotel.backend.interfaces.GuestManager;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 
-import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
+import pv168.hotelmasters.superhotel.backend.exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.db.Utilities;
 import pv168.hotelmasters.superhotel.backend.exceptions.DBException;
 import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
@@ -109,7 +109,7 @@ public class GuestManagerImpl implements GuestManager{
         try (Connection con = dataSource.getConnection()) {
             con.setAutoCommit(false);
             ps = con.prepareStatement("DELETE FROM Guest WHERE id = ?");
-            ps. setLong(1,guest.getId());
+            ps.setLong(1,guest.getId());
             int count = ps.executeUpdate();
             Utilities.checkUpdateSanity(count,true);
             con.commit();

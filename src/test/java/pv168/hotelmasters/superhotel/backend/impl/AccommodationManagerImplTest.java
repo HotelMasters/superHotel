@@ -8,41 +8,41 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import javax.sql.DataSource;
 
-
-import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.db.Utilities;
 import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 import pv168.hotelmasters.superhotel.backend.entities.Room;
+import pv168.hotelmasters.superhotel.backend.exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
-import pv168.hotelmasters.superhotel.backend.impl.GuestFactory;
-import pv168.hotelmasters.superhotel.backend.impl.RoomFactory;
 import static org.assertj.core.api.Assertions.*;
-import java.time.LocalDateTime;
 
 import java.sql.SQLException;
 import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.time.Month.*;
 
 /**
  * @author Gabriela Godiskova
  */
-public class AccomodationManagerImplTest {
+public class AccommodationManagerImplTest {
 
-    private AccomodationManagerImpl manager;
+    private AccommodationManagerImpl manager;
     private GuestManagerImpl guestManager;
     private RoomManagerImpl roomManager;
     private DataSource dataSource;
 
-    private final static ZonedDateTime NOW = LocalDateTime.of(2012,FEBRUARY,29,16,00).atZone(ZoneId.of("UTC"));
+    private final static LocalDate NOW = LocalDate.of(2016,FEBRUARY,29);
+    private final static Clock clock = Clock.fixed(
+            NOW.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private static DataSource prepareDataSrc() throws SQLException {
         EmbeddedDataSource dataSrc = new EmbeddedDataSource();
-        dataSrc.setDatabaseName("memory: superHotel-test");
+        dataSrc.setDatabaseName("memory:superHotel-test");
         dataSrc.setCreateDatabase("create");
         return dataSrc;
     }
@@ -51,9 +51,9 @@ public class AccomodationManagerImplTest {
     public void setUp() throws SQLException{
         dataSource = prepareDataSrc();
         Utilities.executeSql(getClass().getResource("createTables.sql"),dataSource);
-        manager = new AccomodationManagerImpl();
+        manager = new AccommodationManagerImpl(clock);
         manager.setDataSource(dataSource);
-        guestManager = new GuestManagerImpl(Clock.fixed(NOW.toInstant(),NOW.getZone()));
+        guestManager = new GuestManagerImpl(clock);
         guestManager.setDataSource(dataSource);
         roomManager = new RoomManagerImpl();
         roomManager.setDataSource(dataSource);
@@ -68,7 +68,7 @@ public class AccomodationManagerImplTest {
     private Guest john,jane,jack,phoebe,jefrey,guestWithNullId,guestNotInDB;
     private Room economy,luxury,penthouse,roomWithNullId,roomNotInDB;
 
-    public void prepareTestData() throws InvalidEntityException {
+    public void prepareTestData() throws SQLException {
         john = new GuestFactory()
                 .name("john")
                 .address("Manesova 120, Brno")
@@ -115,7 +115,7 @@ public class AccomodationManagerImplTest {
     }
 
     @Test
-    public void createAccomodation() {
+    public void createAccommodation() {
 
         assertThat(manager.findRoomByGuest(john)).isNull();
         assertThat(manager.findRoomByGuest(jane)).isNull();
@@ -126,8 +126,8 @@ public class AccomodationManagerImplTest {
         Accommodation acc1 = acc1Builder().build();
         Accommodation acc2 = acc2Builder().build();
 
-        manager.createAccomodation(acc1);
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc1);
+        manager.createAccommodation(acc2);
 
         assertThat(manager.findGuestByRoom(economy)).isEqualToComparingFieldByField(john);
         assertThat(manager.findGuestByRoom(luxury)).isEqualToComparingFieldByField(jane);
@@ -143,31 +143,31 @@ public class AccomodationManagerImplTest {
     @Test
     public void createAccommodationWithNullGuest(){
         Accommodation acc = acc1Builder().guest(null).build();
-        expectedException.expect(IllegalArgumentException.class);
-        manager.createAccomodation(acc);
+        expectedException.expect(ValidationError.class);
+        manager.createAccommodation(acc);
     }
 
     @Test
     public void createAccommodationWithNullRoom() {
         Accommodation acc = acc1Builder().room(null).build();
-        expectedException.expect(IllegalArgumentException.class);
-        manager.createAccomodation(acc);
+        expectedException.expect(ValidationError.class);
+        manager.createAccommodation(acc);
     }
 
     @Test
     public void createAccommodationWithExistingId() {
         Accommodation acc = acc1Builder().id(42L).build();
         expectedException.expect(InvalidEntityException.class);
-        manager.createAccomodation(acc);
+        manager.createAccommodation(acc);
     }
 
     @Test
-    public void deleteAccomodation() {
+    public void deleteAccommodation() {
         Accommodation acc1 = acc1Builder().build();
         Accommodation acc2 = acc2Builder().build();
 
-        manager.createAccomodation(acc1);
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc1);
+        manager.createAccommodation(acc2);
 
         assertThat(manager.findRoomByGuest(john)).isEqualToComparingFieldByField(economy);
         assertThat(manager.findRoomByGuest(jane)).isEqualToComparingFieldByField(luxury);
@@ -175,118 +175,130 @@ public class AccomodationManagerImplTest {
         assertThat(manager.findRoomByGuest(jefrey)).isNull();
         assertThat(manager.findRoomByGuest(phoebe)).isNull();
 
-        manager.deleteAccomodation(acc1);
+        manager.deleteAccommodation(acc1);
 
-        assertThat(manager.findAccomodationById(acc1.getId())).isNull();
-        assertThat(manager.findAccomodationById(acc2.getId())).isEqualTo(acc2);
+        assertThat(manager.findAccommodationById(acc1.getId())).isNull();
+        assertThat(manager.findAccommodationById(acc2.getId())).isEqualTo(acc2);
     }
 
     @Test
-    public void deleteAccomodationWithNullId() {
-        Accommodation acc1 = acc1Builder().id(null).build();
-        manager.createAccomodation(acc1);
-        expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc1);
-    }
-
-    @Test
-    public void deleteAccomodationWithNullRoom() {
-        Accommodation acc2 = acc2Builder().room(null).build();
-        manager.createAccomodation(acc2);
-        expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc2);
-    }
-
-    @Test
-    public void deleteAccomodationWithNullGuest() {
-        Accommodation acc1 = acc1Builder().guest(null).build();
-        manager.createAccomodation(acc1);
-        expectedException.expect(IllegalArgumentException.class);
-        manager.deleteAccomodation(acc1);
-    }
-
-    @Test
-    public void updateAccomodation() {
+    public void deleteAccommodationWithNullId() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
+        acc1.setId(null);
+        expectedException.expect(InvalidEntityException.class);
+        manager.deleteAccommodation(acc1);
+    }
+
+    @Test
+    public void updateAccommodation() {
+        Accommodation acc1 = acc1Builder().build();
+        manager.createAccommodation(acc1);
 
         Accommodation acc2 = acc2Builder().build();
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc2);
 
         Long acc1Id = acc1.getId();
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setGuest(jack);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setRoom(penthouse);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
-        acc1.setDateFrom(LocalDateTime.of(2008,FEBRUARY,29,13,00));
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        acc1 = manager.findAccommodationById(acc1Id);
+        acc1.setDateFrom(LocalDate.of(2008,FEBRUARY,29));
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
-        acc1.setDateTo(LocalDateTime.of(2016,APRIL,4,12,00));
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        acc1 = manager.findAccommodationById(acc1Id);
+        acc1.setDateTo(LocalDate.of(2016,APRIL,4));
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        acc1 = manager.findAccomodationById(acc1Id);
+        acc1 = manager.findAccommodationById(acc1Id);
         acc1.setTotalPrice(201.00);
-        manager.updateAccomodation(acc1);
-        assertThat(manager.findAccomodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
+        manager.updateAccommodation(acc1);
+        assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
-        assertThat(manager.findAccomodationById(acc2.getId())).isEqualToComparingFieldByField(acc2);
+        assertThat(manager.findAccommodationById(acc2.getId())).isEqualToComparingFieldByField(acc2);
     }
 
     @Test
-    public void updateAccomodationWithNullId() {
+    public void updateAccommodationWithNullId() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         acc1.setId(null);
         expectedException.expect(InvalidEntityException.class);
-        manager.updateAccomodation(acc1);
+        manager.updateAccommodation(acc1);
     }
 
     @Test
-    public void updateAccomodationWithNullGuest() {
+    public void updateAccommodationWithNullGuest() {
         Accommodation acc1 = acc1Builder().build();
-        manager.createAccomodation(acc1);
+        manager.createAccommodation(acc1);
         acc1.setGuest(null);
         expectedException.expect(ValidationError.class);
-        manager.updateAccomodation(acc1);
+        manager.updateAccommodation(acc1);
     }
 
     @Test
-    public void updateAccomodationWithNullRoom() {
+    public void updateAccommodationWithNullRoom() {
         Accommodation acc2 = acc2Builder().build();
-        manager.createAccomodation(acc2);
+        manager.createAccommodation(acc2);
         acc2.setRoom(null);
         expectedException.expect(ValidationError.class);
-        manager.updateAccomodation(acc2);
+        manager.updateAccommodation(acc2);
     }
 
+    @Test
+    public void findAccommodationById() {
+        Accommodation acc1 = acc1Builder().build();
+        manager.createAccommodation(acc1);
+        Accommodation accRetrieved = manager.findAccommodationById(acc1.getId());
+        assertThat(accRetrieved).isEqualToComparingFieldByField(acc1);
+    }
 
+    @Test
+    public void findAllAccommodations() {
+        Accommodation acc1 = acc1Builder().guest(jefrey).build();
+        manager.createAccommodation(acc1);
+        Accommodation acc2 = acc1Builder().totalPrice(750.13).build();
+        manager.createAccommodation(acc2);
+        Accommodation acc3 = acc2Builder().room(penthouse).guest(phoebe).build();
+        manager.createAccommodation(acc3);
+
+        List<Accommodation> expectedAccommodations = new ArrayList<>();
+        expectedAccommodations.add(acc1);
+        expectedAccommodations.add(acc2);
+        expectedAccommodations.add(acc3);
+        assertDeepEquals(expectedAccommodations, manager.findAllAccommodations());
+    }
 
     public AccommodationFactory acc1Builder() {
         return new AccommodationFactory().guest(john)
-                .dateFrom(LocalDateTime.of(2016,FEBRUARY,29,12,00))
-                .dateTo(LocalDateTime.of(2016,MARCH,1,10,00))
+                .dateFrom(LocalDate.of(2016,FEBRUARY,28))
+                .dateTo(LocalDate.of(2016,MARCH,1))
                 .room(economy)
                 .totalPrice(200.00);
     }
 
     public AccommodationFactory acc2Builder() {
         return new AccommodationFactory().guest(jane)
-                .dateFrom(LocalDateTime.of(2017,JANUARY,21,12,00))
-                .dateTo(LocalDateTime.of(2017,JANUARY,23,10,00))
+                .dateFrom(LocalDate.of(2016,FEBRUARY,27))
+                .dateTo(LocalDate.of(2016,MARCH,4))
                 .room(luxury)
                 .totalPrice(400.00);
     }
 
-
+    private static void assertDeepEquals(List<Accommodation> expectedRooms, List<Accommodation> actualRooms) {
+        assertThat(actualRooms.size()).isEqualTo(expectedRooms.size());
+        for (int i = 0; i < expectedRooms.size(); i++) {
+            assertThat(expectedRooms.get(i)).isEqualToComparingFieldByField(actualRooms.get(i));
+        }
+    }
 }
