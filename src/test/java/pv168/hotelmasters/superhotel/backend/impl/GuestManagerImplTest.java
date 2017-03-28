@@ -6,7 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
+import pv168.hotelmasters.superhotel.backend.exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.db.Utilities;
 import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;

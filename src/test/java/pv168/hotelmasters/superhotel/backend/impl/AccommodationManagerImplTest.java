@@ -9,16 +9,13 @@ import org.junit.rules.ExpectedException;
 import javax.sql.DataSource;
 
 
-import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.db.Utilities;
 import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 import pv168.hotelmasters.superhotel.backend.entities.Room;
+import pv168.hotelmasters.superhotel.backend.exceptions.InvalidEntityException;
 import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
-import pv168.hotelmasters.superhotel.backend.impl.GuestFactory;
-import pv168.hotelmasters.superhotel.backend.impl.RoomFactory;
 import static org.assertj.core.api.Assertions.*;
-import java.time.LocalDateTime;
 
 import java.sql.SQLException;
 import java.time.*;
@@ -35,7 +32,9 @@ public class AccommodationManagerImplTest {
     private RoomManagerImpl roomManager;
     private DataSource dataSource;
 
-    private final static ZonedDateTime NOW = LocalDateTime.of(2012,FEBRUARY,29,16,00).atZone(ZoneId.of("UTC"));
+    private final static LocalDate NOW = LocalDate.of(2012,FEBRUARY,29);
+    private final static Clock clock = Clock.fixed(
+            NOW.atStartOfDay().toInstant(ZoneOffset.UTC), ZoneId.systemDefault());
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -51,9 +50,9 @@ public class AccommodationManagerImplTest {
     public void setUp() throws SQLException{
         dataSource = prepareDataSrc();
         Utilities.executeSql(getClass().getResource("createTables.sql"),dataSource);
-        manager = new AccommodationManagerImpl();
+        manager = new AccommodationManagerImpl(clock);
         manager.setDataSource(dataSource);
-        guestManager = new GuestManagerImpl(Clock.fixed(NOW.toInstant(),NOW.getZone()));
+        guestManager = new GuestManagerImpl(clock);
         guestManager.setDataSource(dataSource);
         roomManager = new RoomManagerImpl();
         roomManager.setDataSource(dataSource);
@@ -226,12 +225,12 @@ public class AccommodationManagerImplTest {
         assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
         acc1 = manager.findAccommodationById(acc1Id);
-        acc1.setDateFrom(LocalDateTime.of(2008,FEBRUARY,29,13,00));
+        acc1.setDateFrom(LocalDate.of(2008,FEBRUARY,29));
         manager.updateAccommodation(acc1);
         assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
         acc1 = manager.findAccommodationById(acc1Id);
-        acc1.setDateTo(LocalDateTime.of(2016,APRIL,4,12,00));
+        acc1.setDateTo(LocalDate.of(2016,APRIL,4));
         manager.updateAccommodation(acc1);
         assertThat(manager.findAccommodationById(acc1.getId())).isEqualToComparingFieldByField(acc1);
 
@@ -270,23 +269,19 @@ public class AccommodationManagerImplTest {
         manager.updateAccommodation(acc2);
     }
 
-
-
     public AccommodationFactory acc1Builder() {
         return new AccommodationFactory().guest(john)
-                .dateFrom(LocalDateTime.of(2016,FEBRUARY,29,12,00))
-                .dateTo(LocalDateTime.of(2016,MARCH,1,10,00))
+                .dateFrom(LocalDate.of(2016,FEBRUARY,29))
+                .dateTo(LocalDate.of(2016,MARCH,1))
                 .room(economy)
                 .totalPrice(200.00);
     }
 
     public AccommodationFactory acc2Builder() {
         return new AccommodationFactory().guest(jane)
-                .dateFrom(LocalDateTime.of(2017,JANUARY,21,12,00))
-                .dateTo(LocalDateTime.of(2017,JANUARY,23,10,00))
+                .dateFrom(LocalDate.of(2017,JANUARY,21))
+                .dateTo(LocalDate.of(2017,JANUARY,23))
                 .room(luxury)
                 .totalPrice(400.00);
     }
-
-
 }

@@ -2,7 +2,7 @@ package pv168.hotelmasters.superhotel.backend.interfaces;
 
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 
-import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
+import pv168.hotelmasters.superhotel.backend.exceptions.InvalidEntityException;
 
 import javax.xml.bind.ValidationException;
 import java.sql.SQLException;

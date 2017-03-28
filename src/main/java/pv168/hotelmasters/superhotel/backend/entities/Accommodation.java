@@ -1,9 +1,6 @@
 package pv168.hotelmasters.superhotel.backend.entities;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-
 
 /**
  * @author 445434
@@ -12,8 +9,8 @@ public class Accommodation {
     private Long id;
     private Guest guest;
     private Room room;
-    private LocalDateTime dateFrom;
-    private LocalDateTime dateTo;
+    private LocalDate dateFrom;
+    private LocalDate dateTo;
     private Double totalPrice;
 
     public Long getId() {
@@ -40,19 +37,19 @@ public class Accommodation {
         this.room = room;
     }
 
-    public LocalDateTime getDateFrom() {
+    public LocalDate getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(LocalDateTime dateFrom) {
+    public void setDateFrom(LocalDate dateFrom) {
         this.dateFrom = dateFrom;
     }
 
-    public LocalDateTime getDateTo() {
+    public LocalDate getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(LocalDateTime dateTo) {
+    public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
 
