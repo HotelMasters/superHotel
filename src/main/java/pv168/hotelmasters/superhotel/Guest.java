@@ -52,4 +52,12 @@ public class Guest {
     public void setCrCardNumber(Long crCardNumber) {
         this.crCardNumber = crCardNumber;
     }
+
+    public int hashCode(){
+        return this.id.hashCode();
+    }
+
+    public boolean equals(Object other) {
+        return this.id != null && other instanceof Guest && this.id.equals(((Guest)other).getId());
+    }
 }
