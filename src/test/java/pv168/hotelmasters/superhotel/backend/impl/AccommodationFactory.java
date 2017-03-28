@@ -4,6 +4,7 @@ import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 import pv168.hotelmasters.superhotel.backend.entities.Room;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 
 /**
@@ -13,8 +14,8 @@ public class AccommodationFactory {
     private Long id;
     private Guest guest;
     private Room room;
-    private ZonedDateTime dateFrom;
-    private ZonedDateTime dateTo;
+    private LocalDateTime dateFrom;
+    private LocalDateTime dateTo;
     private Double totalPrice;
 
     public AccommodationFactory id(Long id) {
@@ -32,12 +33,12 @@ public class AccommodationFactory {
         return this;
     }
 
-    public AccommodationFactory dateFrom(ZonedDateTime dateFrom) {
+    public AccommodationFactory dateFrom(LocalDateTime dateFrom) {
         this.dateFrom = dateFrom;
         return this;
     }
 
-    public AccommodationFactory dateTo(ZonedDateTime dateTo) {
+    public AccommodationFactory dateTo(LocalDateTime dateTo) {
         this.dateTo = dateTo;
         return this;
     }

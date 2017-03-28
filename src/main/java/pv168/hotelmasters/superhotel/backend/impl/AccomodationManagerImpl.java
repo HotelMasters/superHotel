@@ -37,7 +37,7 @@ public class AccomodationManagerImpl implements AccomodationManager {
     }
 
     @Override
-    public Accommodation findAccomodationById(Accommodation accommodation) {
+    public Accommodation findAccomodationById(Long id) {
         return null;
     }
 
