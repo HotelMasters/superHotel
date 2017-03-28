@@ -52,7 +52,7 @@ public class RoomManagerImplTest {
 
     @Test
     public void createRoom() {
-        Room room = newRoom(4, 1500.2);
+        Room room = createSampleEconomyRoom().build();
         manager.createRoom(room);
 
         Long roomId = room.getId();
@@ -69,22 +69,22 @@ public class RoomManagerImplTest {
 
     @Test
     public void createRoomWithNegativeCapacity() {
-        Room room = newRoom(-2, 1000);
+        Room room = createSampleEconomyRoom().capacity(-2).build();
         exception.expect(ValidationError.class);
         manager.createRoom(room);
     }
 
     @Test
     public void createRoomWithNegativePrice() {
-        Room room = newRoom(7, -200.5);
+        Room room = createSampleDeluxeRoom().price(-120.3).build();
         exception.expect(ValidationError.class);
         manager.createRoom(room);
     }
 
     @Test
     public void updateRoom() {
-        Room room = newRoom(7, 100.3);
-        Room secondRoom = newRoom(5, 200.0);
+        Room room = createSampleEconomyRoom().build();
+        Room secondRoom = createSampleDeluxeRoom().build();
         manager.createRoom(room);
         manager.createRoom(secondRoom);
         Long roomId = room.getId();
@@ -114,7 +114,7 @@ public class RoomManagerImplTest {
 
     @Test
     public void updateRoomWithNullId() {
-        Room room = newRoom(7, 100.2);
+        Room room = createSampleEconomyRoom().build();
         manager.createRoom(room);
 
         room.setId(null);
@@ -124,17 +124,17 @@ public class RoomManagerImplTest {
 
     @Test
     public void updateRoomWithInvalidId() {
-        Room room = newRoom(7, 100.2);
+        Room room = createSampleEconomyRoom().build();
         manager.createRoom(room);
 
-        room.setId(room.getId() + 1);
+        room.setId(-42L);
         exception.expect(DBException.class);
         manager.updateRoom(room);
     }
 
     @Test
     public void updateRoomWithNegativeCapacity() {
-        Room room = newRoom(7, 100.1);
+        Room room = createSampleEconomyRoom().build();
         manager.createRoom(room);
 
         room.setCapacity(-1);
@@ -144,7 +144,7 @@ public class RoomManagerImplTest {
 
     @Test
     public void updateRoomWithNegativePrice() {
-        Room room = newRoom(7, 100.0);
+        Room room = createSampleEconomyRoom().build();
         manager.createRoom(room);
 
         room.setPrice(-420.2);
@@ -154,12 +154,12 @@ public class RoomManagerImplTest {
 
     @Test
     public void deleteRoom() {
-        Room deletedRoom = newRoom(5, 42.8);
+        Room deletedRoom = createSampleEconomyRoom().build();
         manager.createRoom(deletedRoom);
         Long deletedRoomId = deletedRoom.getId();
         assertThat(deletedRoom).isNotNull();
 
-        Room keptRoom = newRoom(7, 1200.50);
+        Room keptRoom = createSampleDeluxeRoom().build();
         manager.createRoom(keptRoom);
         assertThat(keptRoom).isNotNull();
 
@@ -177,28 +177,28 @@ public class RoomManagerImplTest {
 
     @Test
     public void findRoomByCapacity() {
-        Room room41 = newRoom(4, 1200.3);
-        manager.createRoom(room41);
-        Room room42 = newRoom(4, 1500.8);
-        manager.createRoom(room42);
-        Room room31 = newRoom(3, 1200.1);
+        Room room31 = createSampleEconomyRoom().price(120).build();
         manager.createRoom(room31);
+        Room room32 = createSampleEconomyRoom().price(140).build();
+        manager.createRoom(room32);
+        Room room21 = createSampleDeluxeRoom().price(890).build();
+        manager.createRoom(room21);
 
-        List<Room> expectedRooms4 = new ArrayList<>();
-        expectedRooms4.add(room41);
-        expectedRooms4.add(room42);
-        List<Room> rooms4 = manager.findRoomByCapacity(4);
+        List<Room> expectedRooms3 = new ArrayList<>();
+        expectedRooms3.add(room31);
+        expectedRooms3.add(room32);
+        List<Room> rooms3 = manager.findRoomByCapacity(3);
 
-        assertDeepEquals(expectedRooms4, rooms4);
+        assertDeepEquals(expectedRooms3, rooms3);
     }
 
     @Test
-    public void findAllRooms() throws Exception {
-        Room room1 = newRoom(4, 1200.3);
+    public void findAllRooms() {
+        Room room1 = createSampleEconomyRoom().capacity(3).build();
         manager.createRoom(room1);
-        Room room2 = newRoom(4, 1500.8);
+        Room room2 = createSampleDeluxeRoom().capacity(1).build();
         manager.createRoom(room2);
-        Room room3 = newRoom(3, 1200.1);
+        Room room3 = createSampleDeluxeRoom().capacity(2).build();
         manager.createRoom(room3);
 
         List<Room> expectedRooms = new ArrayList<>();
@@ -210,11 +210,12 @@ public class RoomManagerImplTest {
         assertDeepEquals(expectedRooms, rooms);
     }
 
-    private static Room newRoom(int capacity, double price) {
-        Room room = new Room();
-        room.setCapacity(capacity);
-        room.setPrice(price);
-        return room;
+    private static RoomFactory createSampleEconomyRoom() {
+        return new RoomFactory().capacity(3).price(500.7);
+    }
+
+    private static RoomFactory createSampleDeluxeRoom() {
+        return new RoomFactory().capacity(2).price(1200.4);
     }
 
     private static void assertDeepEquals(Room expectedRoom, Room actualRoom) {
