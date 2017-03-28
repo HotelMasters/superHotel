@@ -1,4 +1,4 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.impl;
 
 import org.junit.After;
 import org.junit.Before;
@@ -11,9 +11,10 @@ import javax.sql.DataSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
-import pv168.hotelmasters.superhotel.db.Utilities;
-import pv168.hotelmasters.superhotel.exceptions.DBException;
-import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+import pv168.hotelmasters.superhotel.backend.db.Utilities;
+import pv168.hotelmasters.superhotel.backend.entities.Room;
+import pv168.hotelmasters.superhotel.backend.exceptions.DBException;
+import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -1,8 +1,10 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.impl;
 
-import pv168.hotelmasters.superhotel.db.Utilities;
-import pv168.hotelmasters.superhotel.exceptions.DBException;
-import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+import pv168.hotelmasters.superhotel.backend.interfaces.RoomManager;
+import pv168.hotelmasters.superhotel.backend.db.Utilities;
+import pv168.hotelmasters.superhotel.backend.entities.Room;
+import pv168.hotelmasters.superhotel.backend.exceptions.DBException;
+import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -13,7 +15,7 @@ import java.util.logging.Logger;
 /**
  * @author 445434
  */
-public class RoomManagerImpl implements RoomManager{
+public class RoomManagerImpl implements RoomManager {
     private static final Logger logger = Logger.getLogger("RoomManagerImpl");
     private DataSource dataSource;
 

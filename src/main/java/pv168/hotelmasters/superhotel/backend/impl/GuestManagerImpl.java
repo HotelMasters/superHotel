@@ -1,11 +1,12 @@
+package pv168.hotelmasters.superhotel.backend.impl;
 
-package pv168.hotelmasters.superhotel;
+import pv168.hotelmasters.superhotel.backend.interfaces.GuestManager;
+import pv168.hotelmasters.superhotel.backend.entities.Guest;
 
-import com.sun.glass.ui.Window;
 import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
-import pv168.hotelmasters.superhotel.db.Utilities;
-import pv168.hotelmasters.superhotel.exceptions.DBException;
-import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+import pv168.hotelmasters.superhotel.backend.db.Utilities;
+import pv168.hotelmasters.superhotel.backend.exceptions.DBException;
+import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 
 import javax.sql.DataSource;
 import java.sql.*;

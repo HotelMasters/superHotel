@@ -1,4 +1,4 @@
-package pv168.hotelmasters.superhotel;
+package pv168.hotelmasters.superhotel.backend.impl;
 
 import org.apache.derby.jdbc.EmbeddedDataSource;
 import org.junit.After;
@@ -7,8 +7,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import pv168.hotelmasters.superhotel.Exceptions.InvalidEntityException;
-import pv168.hotelmasters.superhotel.db.Utilities;
-import pv168.hotelmasters.superhotel.exceptions.ValidationError;
+import pv168.hotelmasters.superhotel.backend.db.Utilities;
+import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
+import pv168.hotelmasters.superhotel.backend.entities.Guest;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -47,27 +48,26 @@ public class GuestManagerImplTest {
     @Before
     public void setUp() throws SQLException {
         dataSource = prepareDataSource();
-        Utilities.executeSql(GuestManager.class.getResource("createTables.sql"),dataSource);
+        Utilities.executeSql(getClass().getResource("createTables.sql"),dataSource);
         manager = new GuestManagerImpl(prepareClock(NOW));
         manager.setDataSource(dataSource);
     }
 
     @After
     public void tearDown() throws SQLException{
-        Utilities.executeSql(GuestManager.class.getResource("dropTables.sql"),dataSource);
+        Utilities.executeSql(getClass().getResource("dropTables.sql"),dataSource);
     }
 
-
-    private GuestBuilder johnBuilder() {
-        return new GuestBuilder()
+    private GuestFactory johnBuilder() {
+        return new GuestFactory()
                 .name("John Locke")
                 .address("Kvetna 42, Brno")
                 .birthday(1962,AUGUST,29)
                 .crCardNm(Long.valueOf(12345678));
     }
 
-    private GuestBuilder janeBuilder() {
-        return new GuestBuilder()
+    private GuestFactory janeBuilder() {
+        return new GuestFactory()
                 .name("Jane Eyre")
                 .address("Chestnut Ave 102, London")
                 .birthday(1989,NOVEMBER,17)

@@ -1,6 +1,6 @@
-package pv168.hotelmasters.superhotel.db;
+package pv168.hotelmasters.superhotel.backend.db;
 
-import pv168.hotelmasters.superhotel.exceptions.DBException;
+import pv168.hotelmasters.superhotel.backend.exceptions.DBException;
 
 import javax.sql.DataSource;
 import java.io.BufferedReader;

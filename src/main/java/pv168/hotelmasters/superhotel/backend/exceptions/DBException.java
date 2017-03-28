@@ -1,4 +1,4 @@
-package pv168.hotelmasters.superhotel.exceptions;
+package pv168.hotelmasters.superhotel.backend.exceptions;
 
 /**
  * @author Kristian Lesko
