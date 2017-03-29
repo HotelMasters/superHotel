@@ -65,8 +65,8 @@ public class AccommodationManagerImplTest {
         Utilities.executeSql(getClass().getResource("dropTables.sql"),dataSource);
     }
 
-    private Guest john,jane,jack,phoebe,jefrey,guestWithNullId,guestNotInDB;
-    private Room economy,luxury,penthouse,roomWithNullId,roomNotInDB;
+    private Guest john,jane,jack,phoebe,jefrey,guestNotInDB;
+    private Room economy,luxury,penthouse;
 
     public void prepareTestData() throws SQLException {
         john = new GuestFactory()
@@ -109,8 +109,11 @@ public class AccommodationManagerImplTest {
         roomManager.createRoom(luxury);
         roomManager.createRoom(penthouse);
 
-        guestWithNullId = new GuestFactory().id(null).build();
         guestNotInDB = new GuestFactory().id(john.getId()+256).build();
+    }
+
+    @Test
+    public void findGuestByInvalidID() {
         assertThat(guestManager.findGuestById(guestNotInDB.getId())).isNull();
     }
 
