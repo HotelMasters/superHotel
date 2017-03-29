@@ -279,7 +279,9 @@ public class AccommodationManagerImplTest {
         expectedAccommodations.add(acc1);
         expectedAccommodations.add(acc2);
         expectedAccommodations.add(acc3);
-        assertDeepEquals(expectedAccommodations, manager.findAllAccommodations());
+        assertThat(manager.findAllAccommodations())
+                .usingFieldByFieldElementComparator()
+                .isEqualTo(expectedAccommodations);
     }
 
     public AccommodationFactory acc1Builder() {
@@ -298,10 +300,4 @@ public class AccommodationManagerImplTest {
                 .totalPrice(400.00);
     }
 
-    private static void assertDeepEquals(List<Accommodation> expectedRooms, List<Accommodation> actualRooms) {
-        assertThat(actualRooms.size()).isEqualTo(expectedRooms.size());
-        for (int i = 0; i < expectedRooms.size(); i++) {
-            assertThat(expectedRooms.get(i)).isEqualToComparingFieldByField(actualRooms.get(i));
-        }
-    }
 }
