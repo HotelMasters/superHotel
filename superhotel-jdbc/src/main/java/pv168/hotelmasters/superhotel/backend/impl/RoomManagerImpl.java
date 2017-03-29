@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * @author 445434
+ * @author Kristian Lesko
  */
 public class RoomManagerImpl implements RoomManager {
     private static final Logger logger = Logger.getLogger("RoomManagerImpl");
