@@ -63,7 +63,7 @@ public class GuestManagerImplTest {
                 .name("John Locke")
                 .address("Kvetna 42, Brno")
                 .birthday(1962,AUGUST,29)
-                .crCardNm(Long.valueOf(12345678));
+                .crCardNm(12345678L);
     }
 
     private GuestFactory janeBuilder() {
@@ -71,7 +71,7 @@ public class GuestManagerImplTest {
                 .name("Jane Eyre")
                 .address("Chestnut Ave 102, London")
                 .birthday(1989,NOVEMBER,17)
-                .crCardNm(Long.valueOf(123456789));
+                .crCardNm(123456789L);
     }
 
 
@@ -140,7 +140,7 @@ public class GuestManagerImplTest {
 
 
         john = manager.findGuestById(guestId);
-        john.setCrCardNumber(Long.valueOf(123456789));
+        john.setCrCardNumber(123456789L);
         manager.updateGuest(john);
         assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
         assertThat(manager.findGuestById(jane.getId())).isEqualToComparingFieldByField(jane);

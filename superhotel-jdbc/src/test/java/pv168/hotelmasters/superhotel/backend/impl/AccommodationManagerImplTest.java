@@ -68,32 +68,32 @@ public class AccommodationManagerImplTest {
     private Guest john,jane,jack,phoebe,jefrey,guestNotInDB;
     private Room economy,luxury,penthouse;
 
-    public void prepareTestData() throws SQLException {
+    private void prepareTestData() throws SQLException {
         john = new GuestFactory()
                 .name("john")
                 .address("Manesova 120, Brno")
                 .birthday(LocalDate.of(1996,NOVEMBER,23))
-                .crCardNm(Long.valueOf(1234)).build();
+                .crCardNm(1234L).build();
         jane = new GuestFactory()
                 .name("jane")
                 .address("Filkukova 42, Brno")
                 .birthday(LocalDate.of(2008,FEBRUARY,29))
-                .crCardNm(Long.valueOf(12345))
+                .crCardNm(12345L)
                 .build();
         jack = new GuestFactory().name("jack")
                 .address("Hrncirska 23, Brno")
                 .birthday(LocalDate.of(1997,AUGUST,10))
-                .crCardNm(Long.valueOf(1234567))
+                .crCardNm(1234567L)
                 .build();
         phoebe = new GuestFactory().name("phoebe")
                 .address("5th Avenue 21, New York")
                 .birthday(LocalDate.of(1974,DECEMBER,5))
-                .crCardNm(Long.valueOf(12345678))
+                .crCardNm(12345678L)
                 .build();
         jefrey = new GuestFactory().name("jefrey")
                 .address("Green Street 12, Springfield")
                 .birthday(LocalDate.of(1987,MAY,30))
-                .crCardNm(Long.valueOf(123456789))
+                .crCardNm(123456789L)
                 .build();
         economy = new RoomFactory().price(200.00).capacity(3).build();
         luxury = new RoomFactory().price(400.00).capacity(2).build();
@@ -284,7 +284,7 @@ public class AccommodationManagerImplTest {
                 .isEqualTo(expectedAccommodations);
     }
 
-    public AccommodationFactory acc1Builder() {
+    private AccommodationFactory acc1Builder() {
         return new AccommodationFactory().guest(john)
                 .dateFrom(LocalDate.of(2016,FEBRUARY,28))
                 .dateTo(LocalDate.of(2016,MARCH,1))
@@ -292,7 +292,7 @@ public class AccommodationManagerImplTest {
                 .totalPrice(200.00);
     }
 
-    public AccommodationFactory acc2Builder() {
+    private AccommodationFactory acc2Builder() {
         return new AccommodationFactory().guest(jane)
                 .dateFrom(LocalDate.of(2016,FEBRUARY,27))
                 .dateTo(LocalDate.of(2016,MARCH,4))
