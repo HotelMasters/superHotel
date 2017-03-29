@@ -4,11 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>pv168.hotelmasters</groupId>
-    <artifactId>superhotel-jdbc</artifactId>
-    <packaging>jar</packaging>
+    <groupId>pv168.hotelmaster.superhotel</groupId>
+    <artifactId>superhotel</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>The superHotel JDBC project</name>
+    <name>The superHotel project</name>
+
+    <modules>
+        <module>superhotel-jdbc</module>
+    </modules>
 
     <repositories>
         <repository>
