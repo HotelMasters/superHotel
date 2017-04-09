@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class Guest {
     private Long id;
     private String name;
-    private String adress;
+    private String address;
     private LocalDate birthDay;
     private Long crCardNumber;
 
@@ -29,12 +29,12 @@ public class Guest {
         this.name = name;
     }
 
-    public String getAdress() {
-        return adress;
+    public String getAddress() {
+        return address;
     }
 
-    public void setAdress(String adress) {
-        this.adress = adress;
+    public void setAddress(String adress) {
+        this.address = adress;
     }
 
     public LocalDate getBirthDay() {

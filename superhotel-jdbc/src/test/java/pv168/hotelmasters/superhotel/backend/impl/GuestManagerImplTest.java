@@ -134,7 +134,7 @@ public class GuestManagerImplTest {
         assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
 
         john = manager.findGuestById(guestId);
-        john.setAdress("Manesova 21,Brno-Kralovo Pole");
+        john.setAddress("Manesova 21,Brno-Kralovo Pole");
         manager.updateGuest(john);
         assertThat(manager.findGuestById(john.getId())).isEqualToComparingFieldByField(john);
 

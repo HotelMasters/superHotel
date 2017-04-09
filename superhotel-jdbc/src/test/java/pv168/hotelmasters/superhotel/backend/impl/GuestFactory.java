@@ -44,7 +44,7 @@ public class GuestFactory {
         Guest guest = new Guest();
         guest.setId(id);
         guest.setName(name);
-        guest.setAdress(address);
+        guest.setAddress(address);
         guest.setBirthDay(birthday);
         guest.setCrCardNumber(crCardNm);
         return guest;
