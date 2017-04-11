@@ -1,0 +1,41 @@
+body {
+    background: #B0D0E1;
+    font-family: "Open Sans", sans-serif;
+    text-align: center;
+}
+
+h1 {
+    font-size: 3em;
+}
+
+table {
+    margin: auto;
+}
+
+#roomList table, #roomList th, #roomList td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 0 1em;
+}
+
+#roomList input {
+    display: inline;
+    border: 0;
+    margin-top: 1em;
+    padding: 0;
+    font-size: 1em;
+    overflow: visible;
+    cursor: pointer;
+    background: transparent;
+    color: red;
+}
+
+.error {
+    color: red;
+}
+
+#roomCreateSubmit {
+    color: blue;
+    margin: auto;
+    cursor: pointer;
+}
