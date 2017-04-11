@@ -52,10 +52,10 @@ public class GuestManagerImpl implements GuestManager{
         PreparedStatement ps = null;
         try (Connection con = dataSource.getConnection()) {
             con.setAutoCommit(false);
-            ps = con.prepareStatement("INSERT INTO Guest (name,address,birthday,cardNumber) VALUES (?,?,?,?)",
+            ps = con.prepareStatement("INSERT INTO Guest (gstname,address,birthday,cardNumber) VALUES (?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,guest.getName());
-            ps.setString(2,guest.getAdress());
+            ps.setString(2,guest.getAddress());
             ps.setDate(3,toSQLDate(guest.getBirthDay()));
             ps.setLong(4, guest.getCrCardNumber());
             int count = ps.executeUpdate();
@@ -80,10 +80,10 @@ public class GuestManagerImpl implements GuestManager{
         PreparedStatement ps = null;
         try (Connection con = dataSource.getConnection()) {
             con.setAutoCommit(false);
-            ps = con.prepareStatement("UPDATE Guest SET name = ?, address = ?, birthday = ?, cardNumber = ?" +
+            ps = con.prepareStatement("UPDATE Guest SET gstname = ?, address = ?, birthday = ?, cardNumber = ?" +
                     "WHERE id = ?");
             ps.setString(1,guest.getName());
-            ps.setString(2,guest.getAdress());
+            ps.setString(2,guest.getAddress());
             ps.setDate(3,toSQLDate(guest.getBirthDay()));
             ps.setLong(4,guest.getCrCardNumber());
             ps.setLong(5,guest.getId());
@@ -127,7 +127,7 @@ public class GuestManagerImpl implements GuestManager{
         }
         PreparedStatement ps = null;
         try (Connection con = dataSource.getConnection()) {
-            ps = con.prepareStatement("SELECT id, name, address, birthday, cardNumber FROM Guest WHERE id = ?");
+            ps = con.prepareStatement("SELECT id, gstname, address, birthday, cardNumber FROM Guest WHERE id = ?");
             ps.setLong(1,id);
             return singleItemQuery(ps);
         } catch (SQLException e) {
@@ -141,7 +141,7 @@ public class GuestManagerImpl implements GuestManager{
         checkDataSource();
         PreparedStatement ps = null;
         try (Connection con = dataSource.getConnection()) {
-            ps = con.prepareStatement("SELECT id, name, address, birthday, cardNumber FROM Guest");
+            ps = con.prepareStatement("SELECT id, gstname, address, birthday, cardNumber FROM Guest");
             return multipleItemQuery(ps);
         } catch (SQLException e) {
             String msg = "Unable to get all guests from db.";
@@ -157,7 +157,7 @@ public class GuestManagerImpl implements GuestManager{
         if (guest.getName() == null) {
             throw new ValidationError("Guest's name is null");
         }
-        if (guest.getAdress() == null) {
+        if (guest.getAddress() == null) {
             throw new ValidationError("Guest's address is null");
         }
         LocalDate today = LocalDate.now(clock);
@@ -191,8 +191,8 @@ public class GuestManagerImpl implements GuestManager{
     private static Guest toGuest(ResultSet rs) throws SQLException {
         Guest guest = new Guest();
         guest.setId(rs.getLong("id"));
-        guest.setName(rs.getString("name"));
-        guest.setAdress(rs.getString("address"));
+        guest.setName(rs.getString("gstname"));
+        guest.setAddress(rs.getString("address"));
         guest.setBirthDay(toLocalDate(rs.getDate("birthday")));
         guest.setCrCardNumber(rs.getLong("cardNumber"));
         return guest;

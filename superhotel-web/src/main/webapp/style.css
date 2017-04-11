@@ -1,0 +1,66 @@
+body {
+    background-color:floralwhite;
+    color: black;
+    text-align: center;
+}
+h1 {
+    font-size: 7em;
+    font-family: 'News Cycle', sans-serif;
+    text-align: center;
+    color: lightcoral;
+
+}
+
+h2 {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 2em;
+    color: lightcoral;
+
+}
+table {
+    border-collapse:collapse;
+}
+table,th,tr,td {
+    font-family: 'Open Sans', sans-serif;
+    border: 1px solid black;
+    text-align: center;
+    min-width: 250px;
+    margin: auto;
+}
+th {
+    text-align: center;
+}
+p {
+    font-size: 1.5em;
+    font-family: 'Open Sans',sans-serif;
+
+}
+.error {
+    font-family: 'Open Sans',sans-serif;
+    color: red;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: black;
+    width: 425px;
+    margin: auto;
+}
+#add {
+    margin-top: 0.4cm;
+    color: snow;
+    background-color:seagreen;
+    border-radius: 10px;
+}
+#del {
+    margin-top: 0.4cm;
+    color: snow;
+    background-color: darkred;
+    border-radius: 10px;
+}
+#tab2 {
+    margin-top: -0.4cm;
+}
+#tab1 {
+    margin-top: -2cm;
+}
