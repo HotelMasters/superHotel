@@ -34,7 +34,7 @@ public class GuestServlet extends HttpServlet{
             String birthday = request.getParameter("birthDay");
             String crCardNum = request.getParameter("crCardNumber");
             if (name.length()==0||address.length()==0||birthday.length()==0||crCardNum.length()==0) {
-                request.setAttribute("error","Všetky atributy musia byť nastavené.");
+                request.setAttribute("error","Všetky atribúty musia byť nastavené.");
                 doGet(request, response);
                 return;
             }
@@ -53,7 +53,6 @@ public class GuestServlet extends HttpServlet{
                 Long helpId = Long.valueOf(request.getParameter("id"));
                 getGuestManager().deleteGuest(getGuestManager().findGuestById(helpId));
                 response.sendRedirect(request.getContextPath()+"/guest");
-                return;
         } else {
             request.setAttribute("error","Neznama akcia.");
         }

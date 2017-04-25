@@ -45,6 +45,7 @@ p {
     border-color: black;
     width: 425px;
     margin: auto;
+    padding-top: -1em;
 }
 #add {
     margin-top: 0.4cm;
@@ -59,7 +60,7 @@ p {
     border-radius: 10px;
 }
 #tab2 {
-    margin-top: -0.4cm;
+    margin-top: 0.5em;
 }
 #tab1 {
     margin-top: -2cm;
