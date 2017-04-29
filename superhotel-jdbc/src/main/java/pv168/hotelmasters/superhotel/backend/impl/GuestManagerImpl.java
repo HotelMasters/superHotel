@@ -49,7 +49,7 @@ public class GuestManagerImpl implements GuestManager{
         if(guest.getId() != null) {
             throw new InvalidEntityException("Guest already in database");
         }
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try (Connection con = dataSource.getConnection()) {
             con.setAutoCommit(false);
             ps = con.prepareStatement("INSERT INTO Guest (gstname,address,birthday,cardNumber) VALUES (?,?,?,?)",
@@ -77,7 +77,7 @@ public class GuestManagerImpl implements GuestManager{
         if (guest.getId() == null) {
             throw new InvalidEntityException("Guest's id is null");
         }
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try (Connection con = dataSource.getConnection()) {
             con.setAutoCommit(false);
             ps = con.prepareStatement("UPDATE Guest SET gstname = ?, address = ?, birthday = ?, cardNumber = ?" +
@@ -125,7 +125,7 @@ public class GuestManagerImpl implements GuestManager{
         if (id == null) {
             throw new IllegalArgumentException("Id is null");
         }
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try (Connection con = dataSource.getConnection()) {
             ps = con.prepareStatement("SELECT id, gstname, address, birthday, cardNumber FROM Guest WHERE id = ?");
             ps.setLong(1,id);
@@ -139,7 +139,7 @@ public class GuestManagerImpl implements GuestManager{
 
     public List<Guest> findAllGuests() {
         checkDataSource();
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try (Connection con = dataSource.getConnection()) {
             ps = con.prepareStatement("SELECT id, gstname, address, birthday, cardNumber FROM Guest");
             return multipleItemQuery(ps);
@@ -154,11 +154,11 @@ public class GuestManagerImpl implements GuestManager{
         if (guest == null) {
             throw new IllegalArgumentException("Guest is null");
         }
-        if (guest.getName() == null) {
-            throw new ValidationError("Guest's name is null");
+        if (guest.getName() == null || guest.getName().length() == 0) {
+            throw new ValidationError("Guest's name must be filled in.");
         }
-        if (guest.getAddress() == null) {
-            throw new ValidationError("Guest's address is null");
+        if (guest.getAddress() == null || guest.getAddress().length() == 0) {
+            throw new ValidationError("Guest's address must be filled in.");
         }
         LocalDate today = LocalDate.now(clock);
         if (guest.getBirthDay() != null && guest.getBirthDay().isAfter(today)) {

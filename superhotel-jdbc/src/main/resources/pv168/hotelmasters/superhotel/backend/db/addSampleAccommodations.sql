@@ -1,0 +1,1 @@
+INSERT INTO ACCOMMODATION (guestId, roomId, startDate, endDate, price) VALUES (1, 2, '04/12/2017', '04/15/2017', 2000)

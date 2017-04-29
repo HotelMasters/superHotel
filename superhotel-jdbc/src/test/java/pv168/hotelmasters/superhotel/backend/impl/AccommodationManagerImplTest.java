@@ -95,9 +95,9 @@ public class AccommodationManagerImplTest {
                 .birthday(LocalDate.of(1987,MAY,30))
                 .crCardNm(123456789L)
                 .build();
-        economy = new RoomFactory().price(200.00).capacity(3).build();
-        luxury = new RoomFactory().price(400.00).capacity(2).build();
-        penthouse = new RoomFactory().price(2200.00).capacity(4).build();
+        economy = new RoomFactory().name("Economy").price(200.00).capacity(3).build();
+        luxury = new RoomFactory().name("Luxury").price(400.00).capacity(2).build();
+        penthouse = new RoomFactory().name("Penthouse").price(2200.00).capacity(4).build();
 
         guestManager.createGuest(john);
         guestManager.createGuest(jane);

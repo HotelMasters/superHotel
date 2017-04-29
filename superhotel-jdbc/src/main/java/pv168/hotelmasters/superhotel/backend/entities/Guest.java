@@ -53,11 +53,18 @@ public class Guest {
         this.crCardNumber = crCardNumber;
     }
 
+    @Override
     public int hashCode(){
         return this.id.hashCode();
     }
 
+    @Override
     public boolean equals(Object other) {
         return this.id != null && other instanceof Guest && this.id.equals(((Guest)other).getId());
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

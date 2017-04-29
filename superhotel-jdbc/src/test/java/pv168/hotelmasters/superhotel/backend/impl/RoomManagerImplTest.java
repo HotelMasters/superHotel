@@ -212,11 +212,11 @@ public class RoomManagerImplTest {
     }
 
     private static RoomFactory createSampleEconomyRoom() {
-        return new RoomFactory().capacity(3).price(500.7);
+        return new RoomFactory().name("Economy").capacity(3).price(500.7);
     }
 
     private static RoomFactory createSampleDeluxeRoom() {
-        return new RoomFactory().capacity(2).price(1200.4);
+        return new RoomFactory().name("Deluxe").capacity(2).price(1200.4);
     }
 
     private static void assertDeepEquals(Room expectedRoom, Room actualRoom) {

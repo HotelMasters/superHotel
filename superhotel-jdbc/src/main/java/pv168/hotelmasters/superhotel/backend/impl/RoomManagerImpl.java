@@ -62,13 +62,15 @@ public class RoomManagerImpl implements RoomManager {
     }
 
     private PreparedStatement prepareCreateStatement(Connection connection, Room room) throws SQLException {
-        String createQuery = "INSERT INTO room (capacity, price) VALUES (?, ?)";
+        String createQuery = "INSERT INTO room (roomname, capacity, price) VALUES (?, ?, ?)";
         logger.info("Preparing creation statement with query " + createQuery);
         PreparedStatement statement = connection.prepareStatement(createQuery, Statement.RETURN_GENERATED_KEYS);
-        statement.setInt(1, room.getCapacity());
-        logger.fine("Set parameter at index 1 to (int) " + room.getCapacity());
-        statement.setDouble(2, room.getPrice());
-        logger.fine("Set parameter at index 2 to (double) " + room.getPrice());
+        statement.setString(1, room.getName());
+        logger.fine("Set parameter at index 1 to (string) " + room.getName());
+        statement.setInt(2, room.getCapacity());
+        logger.fine("Set parameter at index 2 to (int) " + room.getCapacity());
+        statement.setDouble(3, room.getPrice());
+        logger.fine("Set parameter at index 3 to (double) " + room.getPrice());
         return statement;
     }
 
@@ -101,15 +103,17 @@ public class RoomManagerImpl implements RoomManager {
     }
 
     private PreparedStatement prepareUpdateStatement(Connection connection, Room room) throws SQLException {
-        String updateQuery = "UPDATE room SET capacity = ?, price = ? WHERE id = ?";
+        String updateQuery = "UPDATE room SET roomname = ?, capacity = ?, price = ? WHERE id = ?";
         logger.info("Preparing update statement with query " + updateQuery);
         PreparedStatement statement = connection.prepareStatement(updateQuery);
-        statement.setInt(1, room.getCapacity());
-        logger.fine("Set parameter at index 1 to (int) " + room.getCapacity());
-        statement.setDouble(2, room.getPrice());
-        logger.fine("Set parameter at index 2 to (double) " + room.getPrice());
-        statement.setLong(3, room.getId());
-        logger.fine("Set parameter at index 3 to (long) " + room.getId());
+        statement.setString(1, room.getName());
+        logger.fine("Set parameter at index 1 to (string) " + room.getName());
+        statement.setInt(2, room.getCapacity());
+        logger.fine("Set parameter at index 2 to (int) " + room.getCapacity());
+        statement.setDouble(3, room.getPrice());
+        logger.fine("Set parameter at index 3 to (double) " + room.getPrice());
+        statement.setLong(4, room.getId());
+        logger.fine("Set parameter at index 4 to (long) " + room.getId());
         return statement;
     }
 
@@ -166,7 +170,7 @@ public class RoomManagerImpl implements RoomManager {
     }
 
     private PreparedStatement prepareGetByIdStatement(Connection connection, Long id) throws SQLException {
-        String getByIdQuery = "SELECT id, capacity, price FROM room WHERE id = ?";
+        String getByIdQuery = "SELECT id, roomname, capacity, price FROM room WHERE id = ?";
         logger.info("Preparing statement with get by ID query " + getByIdQuery);
         PreparedStatement statement = connection.prepareStatement(getByIdQuery);
         statement.setLong(1, id);
@@ -188,7 +192,7 @@ public class RoomManagerImpl implements RoomManager {
     }
 
     private PreparedStatement prepareGetByCapacityStatement(Connection connection, int capacity) throws SQLException {
-        String getByCapacityQuery = "SELECT id, capacity, price FROM room WHERE capacity = ?";
+        String getByCapacityQuery = "SELECT id, roomname, capacity, price FROM room WHERE capacity = ?";
         logger.info("Preparing statement with get by capacity query " + getByCapacityQuery);
         PreparedStatement statement = connection.prepareStatement(getByCapacityQuery);
         statement.setLong(1, capacity);
@@ -210,7 +214,7 @@ public class RoomManagerImpl implements RoomManager {
     }
 
     private PreparedStatement prepareGetAllStatement(Connection connection) throws SQLException {
-        String getAllQuery = "SELECT id, capacity, price FROM room";
+        String getAllQuery = "SELECT id, roomname, capacity, price FROM room";
         logger.info("Preparing statement with get all query " + getAllQuery);
         return connection.prepareStatement(getAllQuery);
     }
@@ -221,6 +225,10 @@ public class RoomManagerImpl implements RoomManager {
             throw new IllegalArgumentException("Room object must not be null");
         }
         logger.fine("Non-null room object check passed");
+        if (room.getName() == null) {
+            throw new ValidationError("Room name must be non-null");
+        }
+        logger.fine("Non-null room name check passed");
         if (room.getCapacity() <= 0) {
             throw new ValidationError("Room capacity must be positive");
         }
@@ -254,6 +262,7 @@ public class RoomManagerImpl implements RoomManager {
     private Room parseRoom(ResultSet result) throws SQLException {
         Room room = new Room();
         room.setId(result.getLong("id"));
+        room.setName(result.getString("roomname"));
         room.setCapacity(result.getInt("capacity"));
         room.setPrice(result.getDouble("price"));
         return room;

@@ -17,6 +17,7 @@ public class DBCreator {
             Utilities.executeSql(DBCreator.class.getResource("createTables.sql"), dataSource);
             Utilities.executeSql(DBCreator.class.getResource("addSampleGuests.sql"),dataSource);
             Utilities.executeSql(DBCreator.class.getResource("addSampleRooms.sql"), dataSource);
+            Utilities.executeSql(DBCreator.class.getResource("addSampleAccommodations.sql"), dataSource);
         } catch (SQLException e) {
             e.printStackTrace();
         }
