@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="pv168.hotelmasters.superhotel.backend.UserInterface">
+  <grid id="27dc6" binding="panel1" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="20" y="20" width="1071" height="632"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <tabbedpane id="8c7f2" binding="tabbedPane1" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <preferred-size width="200" height="200"/>
+          </grid>
+        </constraints>
+        <properties>
+          <background color="-15856114"/>
+          <font name="Dialog"/>
+          <foreground color="-16369359"/>
+          <opaque value="false"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <grid id="563f6" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title-resource-bundle="SuperHotel" title-key="NAME_OF_PANE_GUESTS"/>
+            </constraints>
+            <properties>
+              <background color="-15856114"/>
+              <foreground color="-4500394"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <hspacer id="c960a">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="26822">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <scrollpane id="4de60">
+                <constraints>
+                  <grid row="0" column="0" row-span="2" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-12828863"/>
+                  <foreground color="-1"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="22c9d" class="javax.swing.JTable" binding="table1" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <font name="Te X Gyre Adventor" size="14"/>
+                      <gridColor color="-16645628"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="de586" class="javax.swing.JButton" binding="editButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="Te X Gyre Adventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_UPDATE"/>
+                </properties>
+              </component>
+              <component id="61615" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="Te X Gyre Adventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_DELETE"/>
+                </properties>
+              </component>
+              <grid id="2ea0c" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15856114"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="b2656" class="javax.swing.JTextPane" binding="addAGuestTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="3" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <focusable value="true"/>
+                      <font name="TeXGyreAdventor" size="23"/>
+                      <foreground color="-1049089"/>
+                      <margin top="20" left="170" bottom="20" right="20"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_INSERT_GUEST"/>
+                    </properties>
+                  </component>
+                  <vspacer id="79430">
+                    <constraints>
+                      <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="79296" class="javax.swing.JTextPane" binding="nameTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <focusable value="false"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <inheritsPopupMenu value="false"/>
+                      <margin top="0" left="100" bottom="30" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_NAME_GUEST"/>
+                    </properties>
+                  </component>
+                  <component id="df316" class="javax.swing.JTextField" binding="textField1" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <caretColor color="-12828863"/>
+                      <foreground color="-12828863"/>
+                    </properties>
+                  </component>
+                  <component id="ea4e7" class="javax.swing.JTextPane" binding="addressTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="0" left="100" bottom="25" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_ADDRESS_GUEST"/>
+                    </properties>
+                  </component>
+                  <component id="72a42" class="javax.swing.JTextPane" binding="dateOfBirthTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="0" left="70" bottom="25" right="0"/>
+                      <opaque value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_BIRTHDAY_GUEST"/>
+                    </properties>
+                  </component>
+                  <component id="920ce" class="javax.swing.JTextPane" binding="creditCardNumTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="16"/>
+                      <foreground color="-1"/>
+                      <inheritsPopupMenu value="false"/>
+                      <margin top="0" left="50" bottom="25" right="0"/>
+                      <opaque value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_CRCARDNUM_GUEST"/>
+                    </properties>
+                  </component>
+                  <component id="3f61a" class="javax.swing.JTextField" binding="textField2" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <caretColor color="-12828863"/>
+                      <foreground color="-12828863"/>
+                    </properties>
+                  </component>
+                  <component id="ce9fb" class="javax.swing.JTextField" binding="textField3" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="10" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <caretColor color="-12828863"/>
+                      <columns value="0"/>
+                      <foreground color="-12828863"/>
+                    </properties>
+                  </component>
+                  <component id="bcb0b" class="javax.swing.JTextField" binding="textField4" default-binding="true">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="100" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <caretColor color="-12828863"/>
+                      <foreground color="-12828863"/>
+                    </properties>
+                  </component>
+                  <hspacer id="aaadf">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <hspacer id="8dff8">
+                    <constraints>
+                      <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                </children>
+              </grid>
+              <component id="ec7ce" class="javax.swing.JButton" binding="addButton" default-binding="true">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="TeXGyreAdventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_ADD"/>
+                </properties>
+              </component>
+              <component id="413e6" class="javax.swing.JTextArea" binding="textArea1" default-binding="true">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="50"/>
+                  </grid>
+                </constraints>
+                <properties>
+                  <background color="-11726319"/>
+                  <doubleBuffered value="true"/>
+                  <focusCycleRoot value="false"/>
+                  <font name="Te X Gyre Adventor" size="16"/>
+                  <foreground color="-11726319"/>
+                  <lineWrap value="false"/>
+                  <opaque value="false"/>
+                  <tabSize value="4"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <grid id="96087" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title-resource-bundle="SuperHotel" title-key="NAME_OF_PANE_ROOMS"/>
+            </constraints>
+            <properties>
+              <background color="-15856114"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <grid id="f2745" layout-manager="GridLayoutManager" row-count="3" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="6" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15856114"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <vspacer id="e45c3">
+                    <constraints>
+                      <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <hspacer id="1a217">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <hspacer id="f6348">
+                    <constraints>
+                      <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <component id="832f7" class="javax.swing.JTextPane" binding="nameTextPane1" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <inheritsPopupMenu value="false"/>
+                      <margin top="0" left="200" bottom="20" right="3"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_NAME_ROOM"/>
+                    </properties>
+                  </component>
+                  <component id="b907" class="javax.swing.JTextPane" binding="capacityTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="0" left="200" bottom="20" right="3"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_CAPACITY_ROOM"/>
+                    </properties>
+                  </component>
+                  <component id="2a290" class="javax.swing.JTextPane" binding="priceTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="TeXGyreAdventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="0" left="200" bottom="20" right="3"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_PRICE_ROOM"/>
+                    </properties>
+                  </component>
+                  <component id="9fe74" class="javax.swing.JTextField" binding="textField5" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="16c00" class="javax.swing.JTextField" binding="textField6" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="b69d4" class="javax.swing.JTextField" binding="textField7" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <margin top="0" left="0" bottom="0" right="30"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <scrollpane id="d6f47">
+                <constraints>
+                  <grid row="0" column="0" row-span="4" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <focusable value="true"/>
+                  <font name="Te X Gyre Adventor" size="14"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="3d1a1" class="javax.swing.JTable" binding="table2" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <gridColor color="-16777216"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <hspacer id="c9ec1">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <hspacer id="dac1c">
+                <constraints>
+                  <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <component id="c6540" class="javax.swing.JButton" binding="editButton3" default-binding="true">
+                <constraints>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="Te X Gyre Adventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_UPDATE"/>
+                </properties>
+              </component>
+              <component id="54c62" class="javax.swing.JButton" binding="deleteButton1" default-binding="true">
+                <constraints>
+                  <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="TeXGyreAdventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_DELETE"/>
+                </properties>
+              </component>
+              <component id="7ae73" class="javax.swing.JButton" binding="addButton2" default-binding="true">
+                <constraints>
+                  <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="TeXGyreAdventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_ADD"/>
+                </properties>
+              </component>
+              <grid id="41752" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15856114"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="ec473" class="javax.swing.JTextPane" binding="addARoomTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <background color="-10875852"/>
+                      <editable value="true"/>
+                      <font name="TeXGyreAdventor" size="23"/>
+                      <foreground color="-1"/>
+                      <margin top="20" left="250" bottom="20" right="20"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_INSERT_ROOM"/>
+                    </properties>
+                  </component>
+                  <component id="f96b3" class="javax.swing.JTextArea" binding="textArea2" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <background color="-15856114"/>
+                      <font name="Te X Gyre Adventor" size="16"/>
+                      <foreground color="-11726319"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="6cfe2" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <tabbedpane title-resource-bundle="SuperHotel" title-key="NAME_OF_PANE_ACCOM"/>
+            </constraints>
+            <properties>
+              <background color="-15856114"/>
+            </properties>
+            <border type="none"/>
+            <children>
+              <grid id="57a78" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15856114"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="fc341" class="javax.swing.JTextPane" binding="makeAnAccommodationTextPane" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <font name="Te X Gyre Adventor" size="23"/>
+                      <foreground color="-1"/>
+                      <margin top="10" left="180" bottom="3" right="3"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_INSERT_ACCOM"/>
+                    </properties>
+                  </component>
+                  <component id="8942f" class="javax.swing.JTextArea" binding="textArea3" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <background color="-15856114"/>
+                      <font name="Te X Gyre Adventor" size="16"/>
+                      <foreground color="-11726319"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+              <scrollpane id="27341">
+                <constraints>
+                  <grid row="0" column="0" row-span="3" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <font name="Te X Gyre Adventor" size="14"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="22a3" class="javax.swing.JTable" binding="table3" default-binding="true">
+                    <constraints/>
+                    <properties/>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="de536" layout-manager="GridLayoutManager" row-count="5" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-15856114"/>
+                </properties>
+                <border type="none"/>
+                <children>
+                  <component id="8277e" class="javax.swing.JTextArea" binding="guestTextArea" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="Te X Gyre Adventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="16" left="200" bottom="20" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_GUEST_ACCOM"/>
+                    </properties>
+                  </component>
+                  <vspacer id="f48c1">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="f335" class="javax.swing.JTextArea" binding="roomTextArea" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="Te X Gyre Adventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="16" left="200" bottom="20" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_ROOM_ACCOM"/>
+                    </properties>
+                  </component>
+                  <component id="4e579" class="javax.swing.JTextArea" binding="dateFromTextArea" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="Te X Gyre Adventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="16" left="180" bottom="20" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_DATE_FROM_ACC"/>
+                    </properties>
+                  </component>
+                  <component id="e8544" class="javax.swing.JTextArea" binding="dateToTextArea" default-binding="true">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="50"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <disabledTextColor color="-11726319"/>
+                      <font name="Te X Gyre Adventor" size="17"/>
+                      <foreground color="-1"/>
+                      <margin top="16" left="180" bottom="20" right="0"/>
+                      <opaque value="false"/>
+                      <requestFocusEnabled value="false"/>
+                      <text resource-bundle="SuperHotel" key="TEXT_DATE_TO_ACC"/>
+                    </properties>
+                  </component>
+                  <component id="a5b8b" class="javax.swing.JTextField" binding="textField8" default-binding="true">
+                    <constraints>
+                      <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="86007" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+                    <constraints>
+                      <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="41003" class="javax.swing.JComboBox" binding="comboBox2" default-binding="true">
+                    <constraints>
+                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="dd704" class="javax.swing.JTextField" binding="textField9" default-binding="true">
+                    <constraints>
+                      <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <hspacer id="2b82c">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                  <hspacer id="97d8f">
+                    <constraints>
+                      <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                </children>
+              </grid>
+              <hspacer id="f195a">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <component id="32857" class="javax.swing.JButton" binding="editButton2" default-binding="true">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="TeXGyreAdventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_UPDATE"/>
+                </properties>
+              </component>
+              <component id="51524" class="javax.swing.JButton" binding="deleteButton2" default-binding="true">
+                <constraints>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-16369359"/>
+                  <font name="Te X Gyre Adventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_DELETE"/>
+                </properties>
+              </component>
+              <component id="65b4c" class="javax.swing.JButton" binding="makeButton" default-binding="true">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <autoscrolls value="false"/>
+                  <background color="-16369359"/>
+                  <font name="TeXGyreAdventor" size="16"/>
+                  <foreground color="-1"/>
+                  <text resource-bundle="SuperHotel" key="BUTTON_MAKE"/>
+                </properties>
+              </component>
+              <vspacer id="37a50">
+                <constraints>
+                  <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </vspacer>
+            </children>
+          </grid>
+        </children>
+      </tabbedpane>
+    </children>
+  </grid>
+</form>
