@@ -5,7 +5,6 @@ import pv168.hotelmasters.superhotel.backend.db.DBCreator;
 import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 import pv168.hotelmasters.superhotel.backend.entities.Room;
-import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 import pv168.hotelmasters.superhotel.gui.models.AccommodationTableModel;
 import pv168.hotelmasters.superhotel.gui.models.GuestTableModel;
 import pv168.hotelmasters.superhotel.gui.models.RoomTableModel;
@@ -101,7 +100,7 @@ public class SuperHotel {
         initGui();
         initDb(worker);
         initManagers();
-        loadTables();
+        initTableModels();
     }
 
     private void initGui() {
@@ -146,10 +145,13 @@ public class SuperHotel {
         clearAccommodationInputs();
     }
 
-    private void loadTables() {
-        loadGuestTable();
-        loadRoomTable();
-        loadAccommodationTable();
+    private void initTableModels() {
+        guestTableModel = new GuestTableModel(guestManager);
+        guestTable.setModel(guestTableModel);
+        roomTableModel = new RoomTableModel(roomManager);
+        roomTable.setModel(roomTableModel);
+        accommodationTableModel = new AccommodationTableModel(accommodationManager);
+        accommodationTable.setModel(accommodationTableModel);
     }
 
     private static void setLookAndFeel() {
@@ -173,14 +175,6 @@ public class SuperHotel {
         guestUpdate.addActionListener(this::handleGuestUpdateInit);
     }
 
-    private void loadGuestTable() {
-        guestTableModel = new GuestTableModel();
-        for (Guest guest : guestManager.findAllGuests()) {
-            guestTableModel.addGuest(guest);
-        }
-        guestTable.setModel(guestTableModel);
-    }
-
     private class GuestAddWorker extends SwingWorker<Void, Void> {
         private Guest guest;
 
@@ -190,7 +184,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            guestManager.createGuest(guest);
             guestTableModel.addGuest(guest);
             return null;
         }
@@ -220,7 +213,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            guestManager.deleteGuest(guest);
             guestTableModel.deleteGuest(guest);
             return null;
         }
@@ -273,8 +265,7 @@ public class SuperHotel {
     private class GuestUpdateWorker extends SwingWorker<Void, Void> {
         @Override
         protected Void doInBackground() throws Exception {
-            guestManager.updateGuest(editedGuest);
-            guestTableModel.fireTableDataChanged();
+            guestTableModel.updateGuest(editedGuest);
             return null;
         }
 
@@ -372,14 +363,6 @@ public class SuperHotel {
         roomDelete.addActionListener(this::handleRoomDelete);
     }
 
-    private void loadRoomTable() {
-        roomTableModel = new RoomTableModel();
-        for (Room room : roomManager.findAllRooms()) {
-            roomTableModel.addRoom(room);
-        }
-        roomTable.setModel(roomTableModel);
-    }
-
     private class RoomAddWorker extends SwingWorker<Void, Void> {
         private Room room;
 
@@ -389,7 +372,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            roomManager.createRoom(room);
             roomTableModel.addRoom(room);
             return null;
         }
@@ -420,7 +402,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() throws Exception {
-            roomManager.deleteRoom(room);
             roomTableModel.deleteRoom(room);
             return null;
         }
@@ -436,8 +417,8 @@ public class SuperHotel {
 
     private void handleRoomDelete(ActionEvent e) {
         int deletedRow = roomTable.convertRowIndexToModel(roomTable.getSelectedRow());
-        Room deletedRoom = roomTableModel.getRoom(deletedRow);
         if (deletedRow >= 0) {
+            Room deletedRoom = roomTableModel.getRoom(deletedRow);
             if (checkRoomConstraint(deletedRoom)) {
                 roomInfoText.setText(localizedString("ROOM") + " " + localizedString("ROOM_OCCUPIED"));
                 return;
@@ -472,8 +453,7 @@ public class SuperHotel {
     private class RoomUpdateWorker extends SwingWorker<Void, Void> {
         @Override
         protected Void doInBackground() throws Exception {
-            roomManager.updateRoom(editedRoom);
-            roomTableModel.fireTableDataChanged();
+            roomTableModel.updateRoom(editedRoom);
             return null;
         }
 
@@ -567,14 +547,6 @@ public class SuperHotel {
         accommodationDelete.addActionListener(this::handleAccommodationDelete);
     }
 
-    private void loadAccommodationTable() {
-        accommodationTableModel = new AccommodationTableModel();
-        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
-            accommodationTableModel.addAccommodation(accommodation);
-        }
-        accommodationTable.setModel(accommodationTableModel);
-    }
-
     private class AccommodationAddWorker extends SwingWorker<Void, Void> {
         Accommodation accommodation;
 
@@ -584,7 +556,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() {
-            accommodationManager.createAccommodation(accommodation);
             accommodationTableModel.addAccommodation(accommodation);
             return null;
         }
@@ -613,7 +584,6 @@ public class SuperHotel {
 
         @Override
         protected Void doInBackground() {
-            accommodationManager.deleteAccommodation(accommodation);
             accommodationTableModel.deleteAccommodation(accommodation);
             return null;
         }
@@ -647,9 +617,8 @@ public class SuperHotel {
 
     private class AccommodationUpdateWorker extends SwingWorker<Void, Void> {
         @Override
-        protected Void doInBackground() throws Exception {
-            accommodationManager.updateAccommodation(editedAccommodation);
-            accommodationTableModel.fireTableDataChanged();
+        protected Void doInBackground() {
+            accommodationTableModel.updateAccommodation(editedAccommodation);
             return null;
         }
 

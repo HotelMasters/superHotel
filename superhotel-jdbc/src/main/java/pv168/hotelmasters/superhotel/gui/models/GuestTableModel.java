@@ -1,20 +1,28 @@
 package pv168.hotelmasters.superhotel.gui.models;
 
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
+import pv168.hotelmasters.superhotel.backend.interfaces.GuestManager;
 
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Gabriela Godiskova, Kristian Lesko
  */
 public class GuestTableModel extends UserInterfaceTableModel {
-    private List<Guest> guests = new ArrayList<>();
+    private GuestManager manager;
+    private Logger logger = Logger.getLogger("GuestTableModel");
+
+    public GuestTableModel(GuestManager manager) {
+        this.manager = manager;
+        logger.fine("Guest table model initialized with " + manager);
+    }
 
     @Override
     public String getColumnName(int column) {
+        logger.fine("Retrieving name of column no. " + column);
         switch (column) {
             case 0:
                 return getResourceBundle().getString("TEXT_NAME_GUEST");
@@ -31,6 +39,7 @@ public class GuestTableModel extends UserInterfaceTableModel {
 
     @Override
     public Class<?> getColumnClass(int column) {
+        logger.fine("Retrieving column class for column no. " + column);
         switch (column) {
             case 0:
             case 1:
@@ -45,17 +54,20 @@ public class GuestTableModel extends UserInterfaceTableModel {
 
     @Override
     public int getRowCount() {
-        return guests.size();
+        logger.fine("Retrieving row count");
+        return manager.findAllGuests().size();
     }
 
     @Override
     public int getColumnCount() {
+        logger.fine("Retrieving column count");
         return 4;
     }
 
     @Override
     public Object getValueAt(int row, int column) {
-        Guest guest = guests.get(row);
+        logger.fine("Retrieving value at row " + row + ", column " + column);
+        Guest guest = manager.findAllGuests().get(row);
         switch (column) {
             case 0:
                 return guest.getName();
@@ -71,16 +83,29 @@ public class GuestTableModel extends UserInterfaceTableModel {
     }
 
     public void addGuest(Guest guest) {
-        guests.add(guest);
+        logger.fine("Creating guest " + guest);
+        try {
+            manager.createGuest(guest);
+        } catch (SQLException e) {
+            logger.severe("Error creating a guest: " + e);
+        }
+        fireTableDataChanged();
+    }
+
+    public void updateGuest(Guest guest) {
+        logger.fine("Updating guest " + guest);
+        manager.updateGuest(guest);
         fireTableDataChanged();
     }
 
     public void deleteGuest(Guest guest) {
-        guests.remove(guest);
+        logger.fine("Deleting guest " + guest);
+        manager.deleteGuest(guest);
         fireTableDataChanged();
     }
 
     public Guest getGuest(int row) {
-        return guests.get(row);
+        logger.fine("Retrieving guest at row " + row);
+        return manager.findAllGuests().get(row);
     }
 }

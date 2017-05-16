@@ -1,20 +1,27 @@
 package pv168.hotelmasters.superhotel.gui.models;
 
 import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
+import pv168.hotelmasters.superhotel.backend.interfaces.AccommodationManager;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author Gabriela Godiskova, Kristian Lesko
  */
 public class AccommodationTableModel extends UserInterfaceTableModel {
-    private List<Accommodation> accommodations = new ArrayList<>();
+    private AccommodationManager manager;
+    private Logger logger = Logger.getLogger("AccommodationTableModel");
+
+    public AccommodationTableModel(AccommodationManager manager) {
+        this.manager = manager;
+        logger.fine("Accommodation table model initialized with " + manager);
+    }
 
     @Override
     public String getColumnName(int column) {
+        logger.fine("Retrieving name of column no. " + column);
         switch (column) {
             case 0:
                 return getResourceBundle().getString("TEXT_GUEST_ACCOM");
@@ -33,6 +40,7 @@ public class AccommodationTableModel extends UserInterfaceTableModel {
 
     @Override
     public Class<?> getColumnClass(int column) {
+            logger.fine("Retrieving column class for column no. " + column);
             switch (column) {
                 case 0:
                 case 1:
@@ -48,17 +56,20 @@ public class AccommodationTableModel extends UserInterfaceTableModel {
 
     @Override
     public int getRowCount() {
-        return accommodations.size();
+        logger.fine("Retrieving row count");
+        return manager.findAllAccommodations().size();
     }
 
     @Override
     public int getColumnCount() {
+        logger.fine("Retrieving column count");
         return 5;
     }
 
     @Override
     public Object getValueAt(int row, int column) {
-        Accommodation accommodation = accommodations.get(row);
+        logger.fine("Retrieving value at row " + row + ", column " + column);
+        Accommodation accommodation = manager.findAllAccommodations().get(row);
         switch (column) {
             case 0:
                 return accommodation.getGuest().getName();
@@ -76,16 +87,25 @@ public class AccommodationTableModel extends UserInterfaceTableModel {
     }
 
     public void addAccommodation(Accommodation accommodation) {
-        accommodations.add(accommodation);
+        logger.fine("Creating accommodation " + accommodation);
+        manager.createAccommodation(accommodation);
+        fireTableDataChanged();
+    }
+
+    public void updateAccommodation(Accommodation accommodation) {
+        logger.fine("Updating accommodation " + accommodation);
+        manager.updateAccommodation(accommodation);
         fireTableDataChanged();
     }
 
     public void deleteAccommodation(Accommodation accommodation) {
-        accommodations.remove(accommodation);
+        logger.fine("Deleting accommodation " + accommodation);
+        manager.deleteAccommodation(accommodation);
         fireTableDataChanged();
     }
 
     public Accommodation getAccommodation(int row) {
-        return accommodations.get(row);
+        logger.fine("Retrieving accommodation at row " + row);
+        return manager.findAllAccommodations().get(row);
     }
 }
