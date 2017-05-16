@@ -31,9 +31,9 @@ import java.util.logging.Logger;
 /**
  * @author Gabriela Godiskova, Kristian Lesko
  */
-public class UserInterface {
+public class SuperHotel {
     private DataSource dataSource;
-    private static final Logger logger = Logger.getLogger("UserInterface");
+    private static final Logger logger = Logger.getLogger("SuperHotel");
     private static LocalDate NOW = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
 
     private JPanel mainPanel;
@@ -92,7 +92,7 @@ public class UserInterface {
 
     public static void main(String[] args) {
         setLookAndFeel();
-        UserInterface app = new UserInterface();
+        SuperHotel app = new SuperHotel();
         app.initDb();
         app.initManagers();
         app.initGui();
