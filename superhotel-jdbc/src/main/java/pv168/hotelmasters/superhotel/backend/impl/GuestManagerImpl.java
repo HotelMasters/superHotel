@@ -36,6 +36,7 @@ public class GuestManagerImpl implements GuestManager{
     }
 
     private void checkDataSource() {
+        logger.fine("Checking data source");
         if (dataSource == null) {
             throw new IllegalStateException("Data source not set yet.");
         }
@@ -63,6 +64,7 @@ public class GuestManagerImpl implements GuestManager{
 
             Long id = Utilities.parseId(ps.getGeneratedKeys());
             guest.setId(id);
+            logger.info("Guest " + guest + " created");
             con.commit();
         } catch (SQLException e) {
             String msg = "Unable to get guest into db";
@@ -89,6 +91,7 @@ public class GuestManagerImpl implements GuestManager{
             ps.setLong(5,guest.getId());
             int count = ps.executeUpdate();
             Utilities.checkUpdateSanity(count,true);
+            logger.info("Guest " + guest + " updated");
             con.commit();
         } catch (SQLException e) {
             String msg = "Unable to update guest";
@@ -112,6 +115,7 @@ public class GuestManagerImpl implements GuestManager{
             ps.setLong(1,guest.getId());
             int count = ps.executeUpdate();
             Utilities.checkUpdateSanity(count,true);
+            logger.info("Guest " + guest + " deleted");
             con.commit();
         } catch (SQLException e) {
             String msg = "Unable to delete guest from db";
