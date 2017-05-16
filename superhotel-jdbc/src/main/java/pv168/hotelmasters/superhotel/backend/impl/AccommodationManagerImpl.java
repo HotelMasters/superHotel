@@ -41,7 +41,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
     }
 
     private void checkDataSource() {
-        logger.info("Checking data source");
+        logger.fine("Checking data source");
         if (dataSource == null) {
             throw new IllegalStateException("Data source must not be null");
         }
@@ -62,10 +62,12 @@ public class AccommodationManagerImpl implements AccommodationManager {
             statement.setDate(3, Date.valueOf(accommodation.getDateFrom()));
             statement.setDate(4, Date.valueOf(accommodation.getDateTo()));
             statement.setDouble(5, accommodation.getTotalPrice());
+            logger.fine("Executing accommodation create statement " + statement);
             int count = statement.executeUpdate();
             Utilities.checkUpdateSanity(count, true);
 
             accommodation.setId(Utilities.parseId(statement.getGeneratedKeys()));
+            logger.info("Accommodation " + accommodation + " created");
         } catch (SQLException e) {
             logger.severe("Error creating accommodation: " + e);
             throw new DBException(e);
@@ -91,6 +93,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
             statement.setLong(6, accommodation.getId());
             int count = statement.executeUpdate();
             Utilities.checkUpdateSanity(count, false);
+            logger.info("Accommodation " + accommodation + " updated");
         } catch (SQLException e) {
             logger.severe("Error updating accommodation: " + e);
             throw new DBException(e);
@@ -112,6 +115,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
             statement.setLong(1, accommodation.getId());
             int count = statement.executeUpdate();
             Utilities.checkUpdateSanity(count, true);
+            logger.info("Accommodation " + accommodation + " deleted");
         } catch (SQLException e) {
             logger.severe("Error deleting accommodation: " + e);
             throw new DBException(e);
@@ -128,9 +132,11 @@ public class AccommodationManagerImpl implements AccommodationManager {
             for (Accommodation accommodation : accommodations) {
                 LocalDate now = LocalDate.now(clock);
                 if (accommodation.getDateFrom().isBefore(now) && accommodation.getDateTo().isAfter(now)) {
+                    logger.info("Found current room for guest " + guest);
                     return accommodation.getRoom();
                 }
             }
+            logger.info("No current room found for guest " + guest);
             return null;
         } catch (SQLException e) {
             logger.severe("Error finding accommodation by ID: " + e);
@@ -151,9 +157,11 @@ public class AccommodationManagerImpl implements AccommodationManager {
                 logger.info("from = " + accommodation.getDateFrom());
                 logger.info("to = " + accommodation.getDateTo());
                 if (accommodation.getDateFrom().isBefore(now) && accommodation.getDateTo().isAfter(now)) {
+                    logger.info("Found current guest for room " + room);
                     return accommodation.getGuest();
                 }
             }
+            logger.info("No current guest found for room " + room);
             return null;
         } catch (SQLException e) {
             logger.severe("Error finding accommodation by ID: " + e);
@@ -167,6 +175,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setLong(1, accommodationId);
+            logger.fine("Executing find by ID statement " + statement);
             return singleItemQuery(statement);
         } catch (SQLException e) {
             logger.severe("Error finding accommodation by ID: " + e);
@@ -178,6 +187,7 @@ public class AccommodationManagerImpl implements AccommodationManager {
     public List<Accommodation> findAllAccommodations() {
         String query = "SELECT id, guestId, roomId, startDate, endDate, price FROM accommodation";
         try (Connection connection = dataSource.getConnection()) {
+            logger.fine("Listing all accommodations");
             return multipleItemQuery(connection.prepareStatement(query));
         } catch (SQLException e) {
             logger.severe("There was an error getting all accommodations from the DB: " + e);
