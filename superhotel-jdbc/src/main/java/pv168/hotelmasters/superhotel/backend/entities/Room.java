@@ -5,6 +5,7 @@ package pv168.hotelmasters.superhotel.backend.entities;
  */
 public class Room {
     private Long id;
+    private String name;
     private int capacity;
     private Double price;
 
@@ -14,6 +15,14 @@ public class Room {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getCapacity() {
@@ -44,6 +53,6 @@ public class Room {
 
     @Override
     public String toString() {
-        return "[Room ID " + id + "]";
+        return this.name;
     }
 }
