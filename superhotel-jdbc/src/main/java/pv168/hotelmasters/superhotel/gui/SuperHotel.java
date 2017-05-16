@@ -5,7 +5,6 @@ import pv168.hotelmasters.superhotel.backend.db.DBCreator;
 import pv168.hotelmasters.superhotel.backend.entities.Accommodation;
 import pv168.hotelmasters.superhotel.backend.entities.Guest;
 import pv168.hotelmasters.superhotel.backend.entities.Room;
-import pv168.hotelmasters.superhotel.backend.exceptions.ValidationError;
 import pv168.hotelmasters.superhotel.gui.models.AccommodationTableModel;
 import pv168.hotelmasters.superhotel.gui.models.GuestTableModel;
 import pv168.hotelmasters.superhotel.gui.models.RoomTableModel;
@@ -22,7 +21,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -31,9 +29,9 @@ import java.util.logging.Logger;
 /**
  * @author Gabriela Godiskova, Kristian Lesko
  */
-public class UserInterface {
+public class SuperHotel {
     private DataSource dataSource;
-    private static final Logger logger = Logger.getLogger("UserInterface");
+    private static final Logger logger = Logger.getLogger("SuperHotel");
     private static LocalDate NOW = Instant.now().atZone(ZoneId.systemDefault()).toLocalDate();
 
     private JPanel mainPanel;
@@ -92,14 +90,43 @@ public class UserInterface {
 
     public static void main(String[] args) {
         setLookAndFeel();
-        UserInterface app = new UserInterface();
-        app.initDb();
-        app.initManagers();
-        app.initGui();
+        SuperHotel app = new SuperHotel();
+        app.initialize();
     }
 
-    private void initDb() {
-        dataSource = new DBCreator().createBasicDB();
+    private void initialize() {
+        InitSwingWorker worker = new InitSwingWorker();
+        worker.execute();
+        initGui();
+        initDb(worker);
+        initManagers();
+        initTableModels();
+    }
+
+    private void initGui() {
+        JFrame frame = new JFrame("SuperHotel");
+        frame.setMinimumSize(new Dimension(800, 600));
+        frame.setContentPane(mainPanel);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        loadComponents();
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    private class InitSwingWorker extends SwingWorker<DataSource, Void> {
+        @Override
+        protected DataSource doInBackground() {
+            return new DBCreator().createBasicDB();
+        }
+
+    }
+
+    private void initDb(InitSwingWorker worker) {
+        try {
+            dataSource = worker.get();
+        } catch (Exception e) {
+            guestInfoText.setText("Error setting up database.");
+        }
     }
 
     private void initManagers() {
@@ -114,16 +141,17 @@ public class UserInterface {
         AccommodationManagerImpl accommodationManager = new AccommodationManagerImpl(Clock.systemDefaultZone());
         accommodationManager.setDataSource(dataSource);
         this.accommodationManager = accommodationManager;
+
+        clearAccommodationInputs();
     }
 
-    private void initGui() {
-        JFrame frame = new JFrame("SuperHotel");
-        frame.setMinimumSize(new Dimension(800, 600));
-        frame.setContentPane(mainPanel);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        loadComponents();
-        frame.pack();
-        frame.setVisible(true);
+    private void initTableModels() {
+        guestTableModel = new GuestTableModel(guestManager);
+        guestTable.setModel(guestTableModel);
+        roomTableModel = new RoomTableModel(roomManager);
+        roomTable.setModel(roomTableModel);
+        accommodationTableModel = new AccommodationTableModel(accommodationManager);
+        accommodationTable.setModel(accommodationTableModel);
     }
 
     private static void setLookAndFeel() {
@@ -141,40 +169,83 @@ public class UserInterface {
     }
 
     private void loadGuestPanel() {
-        loadGuestTable();
         guestAddBirthday.setDate(Date.from(Instant.now()));
         guestAdd.addActionListener(this::handleGuestAdd);
         guestDelete.addActionListener(this::handleGuestDelete);
         guestUpdate.addActionListener(this::handleGuestUpdateInit);
     }
 
-    private void loadGuestTable() {
-        guestTableModel = new GuestTableModel();
-        for (Guest guest : guestManager.findAllGuests()) {
-            guestTableModel.addGuest(guest);
+    private class GuestAddWorker extends SwingWorker<Void, Void> {
+        private Guest guest;
+
+        GuestAddWorker(Guest guest) {
+            this.guest = guest;
         }
-        guestTable.setModel(guestTableModel);
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            guestTableModel.addGuest(guest);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            guestInfoText.setText(
+                    localizedString("GUEST") + " " +
+                            guest.getName() + " " + localizedString("GUEST_CREATE_SUCCESS"));
+            clearGuestControls();
+        }
     }
 
     private void handleGuestAdd(ActionEvent e) {
         Guest guest = parseGuest();
         if (guest != null) {
-            try {
-                guestManager.createGuest(guest);
-                guestTableModel.addGuest(guest);
-                guestInfoText.setText(
-                        localizedString("GUEST") + " " +
-                                guest.getName() + " " + localizedString("GUEST_CREATE_SUCCESS"));
-                clearGuestControls();
-            } catch (ValidationError | SQLException ex) {
-                guestInfoText.setText(ex.getMessage());
-            }
+            new GuestAddWorker(guest).execute();
+        }
+    }
+
+    private class GuestDeleteWorker extends SwingWorker<Void, Void> {
+        private Guest guest;
+
+        GuestDeleteWorker(Guest guest) {
+            this.guest = guest;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            guestTableModel.deleteGuest(guest);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            guestInfoText.setText(
+                    localizedString("GUEST") + " " +
+                            guest.getName() + " " + localizedString("GUEST_DELETE_SUCCESS"));
+            clearGuestControls();
+            clearAccommodationInputs();
         }
     }
 
     private void handleGuestDelete(ActionEvent e) {
         int deletedRow = guestTable.convertRowIndexToModel(guestTable.getSelectedRow());
-        guestTableModel.deleteGuest(guestTableModel.getGuest(deletedRow));
+        if (deletedRow >= 0) {
+            Guest deletedGuest = guestTableModel.getGuest(deletedRow);
+            if (checkGuestConstraint(deletedGuest)) {
+                guestInfoText.setText(localizedString("GUEST") + " " + localizedString("GUEST_ACCOM_ERROR"));
+                return;
+            }
+            new GuestDeleteWorker(deletedGuest).execute();
+        }
+    }
+
+    private boolean checkGuestConstraint(Guest guest) {
+        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
+            if (accommodation.getGuest().equals(guest)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleGuestUpdateInit(ActionEvent e) {
@@ -191,27 +262,35 @@ public class UserInterface {
         guestAdd.setText(localizedString("BUTTON_UPDATE_FINISH"));
     }
 
+    private class GuestUpdateWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() throws Exception {
+            guestTableModel.updateGuest(editedGuest);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            guestInfoText.setText(
+                    localizedString("GUEST") + " " +
+                            editedGuest.getName() + " " + localizedString("GUEST_UPDATE_SUCCESS"));
+            clearGuestControls();
+            editedGuest = null;
+            guestAdd.setText(localizedString("BUTTON_ADD"));
+        }
+    }
+
     private void handleGuestUpdateFinish(ActionEvent e) {
         Guest parsed = parseGuest();
         if (parsed != null) {
-            try {
-                editedGuest.setName(parsed.getName());
-                editedGuest.setAddress(parsed.getAddress());
-                editedGuest.setBirthDay(parsed.getBirthDay());
-                editedGuest.setCrCardNumber(parsed.getCrCardNumber());
-                guestManager.updateGuest(editedGuest);
-                guestTableModel.fireTableDataChanged();
-                guestInfoText.setText(
-                        localizedString("GUEST") + " " +
-                                editedGuest.getName() + " " + localizedString("GUEST_UPDATE_SUCCESS"));
-                clearGuestControls();
-                editedGuest = null;
-                removeActionListeners(guestAdd);
-                guestAdd.addActionListener(this::handleGuestAdd);
-                guestAdd.setText(localizedString("BUTTON_ADD"));
-            } catch (ValidationError ex) {
-                guestInfoText.setText(ex.getMessage());
-            }
+            editedGuest.setName(parsed.getName());
+            editedGuest.setAddress(parsed.getAddress());
+            editedGuest.setBirthDay(parsed.getBirthDay());
+            editedGuest.setCrCardNumber(parsed.getCrCardNumber());
+            new GuestUpdateWorker().execute();
+            removeActionListeners(guestAdd);
+            guestAdd.addActionListener(this::handleGuestAdd);
+            clearAccommodationInputs();
         }
     }
 
@@ -279,39 +358,82 @@ public class UserInterface {
     }
 
     private void loadRoomPanel() {
-        loadRoomTable();
         roomAdd.addActionListener(this::handleRoomAdd);
         roomUpdate.addActionListener(this::handleRoomUpdateInit);
         roomDelete.addActionListener(this::handleRoomDelete);
     }
 
-    private void loadRoomTable() {
-        roomTableModel = new RoomTableModel();
-        for (Room room : roomManager.findAllRooms()) {
-            roomTableModel.addRoom(room);
+    private class RoomAddWorker extends SwingWorker<Void, Void> {
+        private Room room;
+
+        RoomAddWorker(Room room) {
+            this.room = room;
         }
-        roomTable.setModel(roomTableModel);
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            roomTableModel.addRoom(room);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(
+                    localizedString("ROOM") + " " +
+                            room.getName() + " " + localizedString("ROOM_CREATE_SUCCESS"));
+            clearRoomControls();
+            clearAccommodationInputs();
+        }
     }
 
     private void handleRoomAdd(ActionEvent e) {
         Room room = parseRoom();
         if (room != null) {
-            try {
-                roomManager.createRoom(room);
-                roomTableModel.addRoom(room);
-                roomInfoText.setText(
-                        localizedString("ROOM") + " " +
-                                room.getName() + " " + localizedString("ROOM_CREATE_SUCCESS"));
-                clearRoomControls();
-            } catch (ValidationError ex) {
-                roomInfoText.setText(ex.getMessage());
-            }
+            new RoomAddWorker(room).execute();
+        }
+    }
+
+    private class RoomDeleteWorker extends SwingWorker<Void, Void> {
+        Room room;
+
+        RoomDeleteWorker(Room room) {
+            this.room = room;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            roomTableModel.deleteRoom(room);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(
+                    localizedString("ROOM") + " " +
+                            room.getName() + " " + localizedString("ROOM_DELETE_SUCCESS"));
+            clearAccommodationInputs();
         }
     }
 
     private void handleRoomDelete(ActionEvent e) {
         int deletedRow = roomTable.convertRowIndexToModel(roomTable.getSelectedRow());
-        roomTableModel.deleteRoom(roomTableModel.getRoom(deletedRow));
+        if (deletedRow >= 0) {
+            Room deletedRoom = roomTableModel.getRoom(deletedRow);
+            if (checkRoomConstraint(deletedRoom)) {
+                roomInfoText.setText(localizedString("ROOM") + " " + localizedString("ROOM_OCCUPIED"));
+                return;
+            }
+            new RoomDeleteWorker(deletedRoom).execute();
+        }
+    }
+
+    private boolean checkRoomConstraint(Room room) {
+        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
+            if (accommodation.getRoom().equals(room)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleRoomUpdateInit(ActionEvent e) {
@@ -328,26 +450,34 @@ public class UserInterface {
         roomAdd.setText(localizedString("BUTTON_UPDATE_FINISH"));
     }
 
+    private class RoomUpdateWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() throws Exception {
+            roomTableModel.updateRoom(editedRoom);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(
+                    localizedString("ROOM") + " " +
+                            editedRoom.getName() + " " + localizedString("ROOM_UPDATE_SUCCESS"));
+            clearRoomControls();
+            editedRoom = null;
+            roomAdd.setText(localizedString("BUTTON_ADD"));
+        }
+    }
+
     private void handleRoomUpdateFinish(ActionEvent e) {
         Room parsed = parseRoom();
         if (parsed != null) {
-            try {
-                editedRoom.setName(parsed.getName());
-                editedRoom.setCapacity(parsed.getCapacity());
-                editedRoom.setPrice(parsed.getPrice());
-                roomManager.updateRoom(editedRoom);
-                roomTableModel.fireTableDataChanged();
-                roomInfoText.setText(
-                        localizedString("ROOM") + " " +
-                                editedRoom.getName() + " " + localizedString("ROOM_UPDATE_SUCCESS"));
-                clearRoomControls();
-                editedRoom = null;
-                removeActionListeners(roomAdd);
-                roomAdd.addActionListener(this::handleRoomAdd);
-                roomAdd.setText(localizedString("BUTTON_ADD"));
-            } catch (ValidationError ex) {
-                roomInfoText.setText(ex.getMessage());
-            }
+            editedRoom.setName(parsed.getName());
+            editedRoom.setCapacity(parsed.getCapacity());
+            editedRoom.setPrice(parsed.getPrice());
+            new RoomUpdateWorker().execute();
+            removeActionListeners(roomAdd);
+            roomAdd.addActionListener(this::handleRoomAdd);
+            clearAccommodationInputs();
         }
     }
 
@@ -379,7 +509,7 @@ public class UserInterface {
             } else {
                 errs += localizedString("ERR_PRICE_NUMBER") + "\n";
             }
-            roomAddCapacityHelp.setForeground(errTextColor);
+            roomAddPriceHelp.setForeground(errTextColor);
         }
         roomInfoText.setText(errs);
         if (errs.length() > 0) {
@@ -412,39 +542,63 @@ public class UserInterface {
     }
 
     private void loadAccommodationPanel() {
-        loadAccommodationTable();
-        clearAccommodationControls();
         accommodationAdd.addActionListener(this::handleAccommodationAdd);
         accommodationUpdate.addActionListener(this::handleAccommodationUpdateInit);
         accommodationDelete.addActionListener(this::handleAccommodationDelete);
     }
 
-    private void loadAccommodationTable() {
-        accommodationTableModel = new AccommodationTableModel();
-        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
-            accommodationTableModel.addAccommodation(accommodation);
+    private class AccommodationAddWorker extends SwingWorker<Void, Void> {
+        Accommodation accommodation;
+
+        AccommodationAddWorker(Accommodation accommodation) {
+            this.accommodation = accommodation;
         }
-        accommodationTable.setModel(accommodationTableModel);
+
+        @Override
+        protected Void doInBackground() {
+            accommodationTableModel.addAccommodation(accommodation);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(localizedString("ACCOMMODATION_CREATE_SUCCESS"));
+            clearAccommodationControls();
+        }
     }
 
     private void handleAccommodationAdd(ActionEvent e) {
         Accommodation accommodation = parseAccommodation();
         if (accommodation != null) {
-            try {
-                calculateAccommodationPrice(accommodation);
-                accommodationManager.createAccommodation(accommodation);
-                accommodationTableModel.addAccommodation(accommodation);
-                accommodationInfoText.setText(localizedString("ACCOMMODATION_CREATE_SUCCESS"));
-                clearAccommodationControls();
-            } catch (ValidationError ex) {
-                accommodationInfoText.setText(ex.getMessage());
-            }
+            calculateAccommodationPrice(accommodation);
+            new AccommodationAddWorker(accommodation).execute();
+        }
+    }
+
+    private class AccommodationDeleteWorker extends SwingWorker<Void, Void> {
+        Accommodation accommodation;
+
+        AccommodationDeleteWorker(int row) {
+            this.accommodation = accommodationTableModel.getAccommodation(row);
+        }
+
+        @Override
+        protected Void doInBackground() {
+            accommodationTableModel.deleteAccommodation(accommodation);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(localizedString("ACCOMMODATION_DELETE_SUCCESS"));
         }
     }
 
     private void handleAccommodationDelete(ActionEvent e) {
         int deletedRow = accommodationTable.convertRowIndexToModel(accommodationTable.getSelectedRow());
-        accommodationTableModel.deleteAccommodation(accommodationTableModel.getAccommodation(deletedRow));
+        if (deletedRow >= 0) {
+            new AccommodationDeleteWorker(deletedRow).execute();
+        }
     }
 
     private void handleAccommodationUpdateInit(ActionEvent e) {
@@ -461,26 +615,33 @@ public class UserInterface {
         accommodationAdd.setText(localizedString("BUTTON_UPDATE_FINISH"));
     }
 
+    private class AccommodationUpdateWorker extends SwingWorker<Void, Void> {
+        @Override
+        protected Void doInBackground() {
+            accommodationTableModel.updateAccommodation(editedAccommodation);
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            roomInfoText.setText(localizedString("ACCOMMODATION_UPDATE_SUCCESS"));
+            clearAccommodationControls();
+            editedAccommodation = null;
+            accommodationAdd.setText(localizedString("BUTTON_MAKE"));
+        }
+    }
+
     private void handleAccommodationUpdateFinish(ActionEvent e) {
         Accommodation parsed = parseAccommodation();
         if (parsed != null) {
-            try {
-                editedAccommodation.setGuest(parsed.getGuest());
-                editedAccommodation.setRoom(parsed.getRoom());
-                editedAccommodation.setDateFrom(parsed.getDateFrom());
-                editedAccommodation.setDateTo(parsed.getDateTo());
-                calculateAccommodationPrice(editedAccommodation);
-                accommodationManager.updateAccommodation(editedAccommodation);
-                accommodationTableModel.fireTableDataChanged();
-                accommodationInfoText.setText(localizedString("ACCOMMODATION_UPDATE_SUCCESS"));
-                clearAccommodationControls();
-                editedAccommodation = null;
-                removeActionListeners(accommodationAdd);
-                accommodationAdd.addActionListener(this::handleAccommodationAdd);
-                accommodationAdd.setText(localizedString("BUTTON_MAKE"));
-            } catch (ValidationError ex) {
-                accommodationInfoText.setText(ex.getMessage());
-            }
+            editedAccommodation.setGuest(parsed.getGuest());
+            editedAccommodation.setRoom(parsed.getRoom());
+            editedAccommodation.setDateFrom(parsed.getDateFrom());
+            editedAccommodation.setDateTo(parsed.getDateTo());
+            calculateAccommodationPrice(editedAccommodation);
+            new AccommodationUpdateWorker().execute();
+            removeActionListeners(accommodationAdd);
+            accommodationAdd.addActionListener(this::handleAccommodationAdd);
         }
     }
 
