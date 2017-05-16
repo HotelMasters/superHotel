@@ -214,8 +214,8 @@ public class SuperHotel {
     private class GuestDeleteWorker extends SwingWorker<Void, Void> {
         private Guest guest;
 
-        GuestDeleteWorker(int row) {
-            this.guest = guestTableModel.getGuest(row);
+        GuestDeleteWorker(Guest guest) {
+            this.guest = guest;
         }
 
         @Override
@@ -238,8 +238,22 @@ public class SuperHotel {
     private void handleGuestDelete(ActionEvent e) {
         int deletedRow = guestTable.convertRowIndexToModel(guestTable.getSelectedRow());
         if (deletedRow >= 0) {
-            new GuestDeleteWorker(deletedRow).execute();
+            Guest deletedGuest = guestTableModel.getGuest(deletedRow);
+            if (checkGuestConstraint(deletedGuest)) {
+                guestInfoText.setText(localizedString("GUEST") + " " + localizedString("GUEST_ACCOM_ERROR"));
+                return;
+            }
+            new GuestDeleteWorker(deletedGuest).execute();
         }
+    }
+
+    private boolean checkGuestConstraint(Guest guest) {
+        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
+            if (accommodation.getGuest().equals(guest)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleGuestUpdateInit(ActionEvent e) {
@@ -400,8 +414,8 @@ public class SuperHotel {
     private class RoomDeleteWorker extends SwingWorker<Void, Void> {
         Room room;
 
-        RoomDeleteWorker(int row) {
-            room = roomTableModel.getRoom(row);
+        RoomDeleteWorker(Room room) {
+            this.room = room;
         }
 
         @Override
@@ -422,9 +436,23 @@ public class SuperHotel {
 
     private void handleRoomDelete(ActionEvent e) {
         int deletedRow = roomTable.convertRowIndexToModel(roomTable.getSelectedRow());
+        Room deletedRoom = roomTableModel.getRoom(deletedRow);
         if (deletedRow >= 0) {
-            new RoomDeleteWorker(deletedRow).execute();
+            if (checkRoomConstraint(deletedRoom)) {
+                roomInfoText.setText(localizedString("ROOM") + " " + localizedString("ROOM_OCCUPIED"));
+                return;
+            }
+            new RoomDeleteWorker(deletedRoom).execute();
         }
+    }
+
+    private boolean checkRoomConstraint(Room room) {
+        for (Accommodation accommodation : accommodationManager.findAllAccommodations()) {
+            if (accommodation.getRoom().equals(room)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void handleRoomUpdateInit(ActionEvent e) {
